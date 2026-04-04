@@ -396,6 +396,62 @@ body {
 /* ── 页面隐藏 ── */
 .page { display:none; height:100%; }
 .page.active { display:flex; flex-direction:column; }
+
+/* ── 语音通话 ── */
+.voice-call-overlay {
+  display:none; position:fixed; inset:0; z-index:999;
+  background:linear-gradient(135deg, #fdf2f8, #f3e8ff, #ede9fe);
+  flex-direction:column; align-items:center; justify-content:center;
+}
+.voice-call-overlay.active { display:flex; }
+.vc-avatar {
+  width:120px; height:120px; border-radius:50%;
+  background:linear-gradient(135deg, #e879f9, #f9a8d4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:56px; margin-bottom:16px;
+  box-shadow: 0 0 60px rgba(232,121,249,.3);
+  animation: vcPulse 2s ease-in-out infinite;
+}
+@keyframes vcPulse { 0%,100%{box-shadow:0 0 30px rgba(232,121,249,.2)} 50%{box-shadow:0 0 60px rgba(232,121,249,.4)} }
+.vc-avatar.speaking { animation: vcSpeak .3s ease-in-out infinite alternate; }
+@keyframes vcSpeak { from{transform:scale(1)} to{transform:scale(1.08)} }
+.vc-avatar.listening { box-shadow: 0 0 60px rgba(34,197,94,.4); }
+.vc-name { font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.vc-status { font-size:13px; color:var(--text2); margin-bottom:32px; }
+.vc-status .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+.vc-status .dot.green { background:#22c55e; animation: blink 1s infinite; }
+.vc-status .dot.orange { background:#f59e0b; animation: blink .5s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.vc-transcript {
+  max-width:500px; min-height:60px; padding:16px 20px;
+  background:rgba(255,255,255,.7); border-radius:16px;
+  border:1px solid rgba(168,85,247,.1);
+  font-size:14px; color:var(--text); line-height:1.6;
+  margin-bottom:32px; text-align:center;
+  backdrop-filter:blur(10px);
+  max-height:200px; overflow-y:auto;
+}
+.vc-controls { display:flex; gap:16px; }
+.vc-btn {
+  width:64px; height:64px; border-radius:50%; border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px; cursor:pointer; transition:all .2s;
+}
+.vc-btn:hover { transform:scale(1.1); }
+.vc-btn.mic { background:linear-gradient(135deg,#c084fc,#e879f9); color:#fff; }
+.vc-btn.mic.muted { background:#e5e7eb; color:#9ca3af; }
+.vc-btn.end { background:linear-gradient(135deg,#ef4444,#f472b6); color:#fff; }
+.vc-btn.end:hover { transform:scale(1.1); }
+.vc-subject-info {
+  position:absolute; top:20px; left:50%; transform:translateX(-50%);
+  padding:6px 16px; border-radius:20px;
+  background:rgba(255,255,255,.6); border:1px solid rgba(168,85,247,.1);
+  font-size:12px; color:var(--text2);
+}
+.vc-timer {
+  position:absolute; top:20px; right:24px;
+  font-size:14px; color:var(--text2); font-weight:600;
+}
 </style>
 </head>
 <body>
@@ -498,9 +554,9 @@ body {
             <div class="qicon">📸</div>
             <div><div class="qlabel">拍题解答</div><div class="qdesc">拍照上传，喵老师详解~</div></div>
           </div>
-          <div class="quick-btn" onclick="switchPage('ai')">
-            <div class="qicon">🐱</div>
-            <div><div class="qlabel">问喵老师</div><div class="qdesc">任何学科问题都可以问</div></div>
+          <div class="quick-btn" onclick="switchPage('ai');setTimeout(startVoiceCall,300)">
+            <div class="qicon">📞</div>
+            <div><div class="qlabel">语音辅导</div><div class="qdesc">像打电话一样问喵老师</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('wrong')">
             <div class="qicon">🩹</div>
@@ -530,6 +586,7 @@ body {
       <div class="main-header">
         <div class="main-title">🐱 喵老师</div>
         <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="startVoiceCall()" style="background:linear-gradient(135deg,#c084fc,#e879f9)">📞 语音辅导</button>
           <button class="btn btn-ghost" onclick="clearChat()">新对话</button>
         </div>
       </div>
@@ -670,6 +727,20 @@ body {
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- 语音通话界面 -->
+<div class="voice-call-overlay" id="voiceCallOverlay">
+  <div class="vc-subject-info" id="vcSubject">📎 全科辅导</div>
+  <div class="vc-timer" id="vcTimer">00:00</div>
+  <div class="vc-avatar" id="vcAvatar">🐱</div>
+  <div class="vc-name">喵老师</div>
+  <div class="vc-status" id="vcStatus"><span class="dot green"></span>等待开始...</div>
+  <div class="vc-transcript" id="vcTranscript">点击下方麦克风按钮开始语音辅导~<br>直接说出你的问题，喵老师会语音回答你</div>
+  <div class="vc-controls">
+    <button class="vc-btn mic" id="vcMicBtn" onclick="toggleVoiceCallMic()">🎤</button>
+    <button class="vc-btn end" onclick="endVoiceCall()">📞</button>
   </div>
 </div>
 
@@ -1363,6 +1434,230 @@ function resetPomodoro() {
   document.getElementById('pomoLabel').textContent = '专注学习';
   document.getElementById('pomoStartBtn').textContent = '开始';
   document.getElementById('pomoCircle').classList.remove('running','break');
+}
+
+// ── 语音通话辅导 ──
+let vcActive = false;
+let vcRecognition = null;
+let vcSynth = window.speechSynthesis;
+let vcMessages = [];
+let vcTimerInterval = null;
+let vcSeconds = 0;
+let vcMicOn = true;
+let vcProcessing = false;
+
+function startVoiceCall() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    alert('你的浏览器不支持语音功能，请使用 Chrome 浏览器');
+    return;
+  }
+  vcActive = true;
+  vcMessages = [];
+  vcSeconds = 0;
+  vcMicOn = true;
+  vcProcessing = false;
+
+  const subj = subjects.find(s => s.name === currentSubject);
+  document.getElementById('vcSubject').textContent = subj ? `${subj.icon} ${subj.name}辅导` : '📎 全科辅导';
+  document.getElementById('voiceCallOverlay').classList.add('active');
+  document.getElementById('vcTranscript').innerHTML = '🎤 请说出你的问题...';
+  document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
+  document.getElementById('vcAvatar').className = 'vc-avatar listening';
+
+  // 计时器
+  vcTimerInterval = setInterval(() => {
+    vcSeconds++;
+    const m = Math.floor(vcSeconds / 60).toString().padStart(2, '0');
+    const s = (vcSeconds % 60).toString().padStart(2, '0');
+    document.getElementById('vcTimer').textContent = `${m}:${s}`;
+  }, 1000);
+
+  // 初始化语音识别
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  vcRecognition = new SR();
+  vcRecognition.continuous = true;
+  vcRecognition.interimResults = true;
+  vcRecognition.lang = 'zh-CN';
+
+  let finalText = '';
+  let silenceTimer = null;
+
+  vcRecognition.onresult = function(e) {
+    if (vcProcessing) return;
+    let interim = '';
+    finalText = '';
+    for (let i = 0; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        finalText += e.results[i][0].transcript;
+      } else {
+        interim += e.results[i][0].transcript;
+      }
+    }
+    document.getElementById('vcTranscript').innerHTML =
+      (finalText ? `<div style="color:var(--accent);margin-bottom:4px">🗣 ${finalText}</div>` : '') +
+      (interim ? `<div style="color:var(--text3)">...${interim}</div>` : '');
+
+    // 说完一句话后2秒没有新内容，自动发送
+    clearTimeout(silenceTimer);
+    if (finalText.trim()) {
+      silenceTimer = setTimeout(() => {
+        if (finalText.trim() && !vcProcessing) {
+          vcProcessAndReply(finalText.trim());
+          finalText = '';
+        }
+      }, 2000);
+    }
+  };
+
+  vcRecognition.onend = function() {
+    if (vcActive && vcMicOn && !vcProcessing) {
+      try { vcRecognition.start(); } catch(e) {}
+    }
+  };
+
+  vcRecognition.onerror = function(e) {
+    if (e.error === 'no-speech') return;
+    console.log('语音识别错误:', e.error);
+  };
+
+  try { vcRecognition.start(); } catch(e) {}
+}
+
+async function vcProcessAndReply(userText) {
+  vcProcessing = true;
+  document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>喵老师正在思考...';
+  document.getElementById('vcAvatar').className = 'vc-avatar';
+
+  // 暂停识别
+  try { vcRecognition.stop(); } catch(e) {}
+
+  vcMessages.push({role: 'user', content: userText});
+
+  // 显示用户说的话
+  document.getElementById('vcTranscript').innerHTML =
+    `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
+    `<div style="color:var(--text2)">🐱 思考中...</div>`;
+
+  try {
+    const resp = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        messages: vcMessages.map(m => ({role: m.role, content: m.content})),
+        subject: currentSubject,
+      }),
+    });
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) fullText += data.text;
+        } catch(e) {}
+      }
+    }
+
+    vcMessages.push({role: 'assistant', content: fullText});
+
+    // 显示回答
+    document.getElementById('vcTranscript').innerHTML =
+      `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
+      `<div style="font-size:13px;line-height:1.6">🐱 ${fullText.slice(0, 500)}${fullText.length > 500 ? '...' : ''}</div>`;
+
+    // 语音播报
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>喵老师正在说话...';
+    document.getElementById('vcAvatar').className = 'vc-avatar speaking';
+
+    // 清理文本用于语音（去掉公式、代码等）
+    let speakText = fullText
+      .replace(/\$[^$]+\$/g, '公式')
+      .replace(/```[\s\S]*?```/g, '代码')
+      .replace(/[#*_`]/g, '')
+      .replace(/\n+/g, '。')
+      .slice(0, 800);
+
+    await vcSpeak(speakText);
+
+  } catch(e) {
+    document.getElementById('vcTranscript').innerHTML =
+      `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
+  }
+
+  // 说完后继续听
+  vcProcessing = false;
+  if (vcActive && vcMicOn) {
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
+    document.getElementById('vcAvatar').className = 'vc-avatar listening';
+    try { vcRecognition.start(); } catch(e) {}
+  }
+}
+
+function vcSpeak(text) {
+  return new Promise((resolve) => {
+    if (!vcSynth || !vcActive) { resolve(); return; }
+    vcSynth.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+    utter.rate = 1.1;
+    utter.pitch = 1.1;
+    // 选择中文女声
+    const voices = vcSynth.getVoices();
+    const zhVoice = voices.find(v => v.lang.includes('zh') && v.name.includes('Female'))
+      || voices.find(v => v.lang.includes('zh-CN'))
+      || voices.find(v => v.lang.includes('zh'));
+    if (zhVoice) utter.voice = zhVoice;
+    utter.onend = resolve;
+    utter.onerror = resolve;
+    vcSynth.speak(utter);
+    // 安全超时
+    setTimeout(resolve, 60000);
+  });
+}
+
+function toggleVoiceCallMic() {
+  vcMicOn = !vcMicOn;
+  const btn = document.getElementById('vcMicBtn');
+  if (vcMicOn) {
+    btn.className = 'vc-btn mic';
+    btn.textContent = '🎤';
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
+    document.getElementById('vcAvatar').className = 'vc-avatar listening';
+    if (!vcProcessing) try { vcRecognition.start(); } catch(e) {}
+  } else {
+    btn.className = 'vc-btn mic muted';
+    btn.textContent = '🔇';
+    document.getElementById('vcStatus').innerHTML = '<span class="dot"></span>麦克风已静音';
+    document.getElementById('vcAvatar').className = 'vc-avatar';
+    try { vcRecognition.stop(); } catch(e) {}
+  }
+}
+
+function endVoiceCall() {
+  vcActive = false;
+  vcMicOn = false;
+  clearInterval(vcTimerInterval);
+  try { vcRecognition.stop(); } catch(e) {}
+  try { vcSynth.cancel(); } catch(e) {}
+  document.getElementById('voiceCallOverlay').classList.remove('active');
+
+  // 把语音对话内容加到文字聊天里
+  if (vcMessages.length > 0) {
+    chatMessages = chatMessages.concat(vcMessages);
+    const container = document.getElementById('chatMessages');
+    const empty = container.querySelector('.empty-state');
+    if (empty) empty.remove();
+    vcMessages.forEach(m => {
+      addMessageToUI(m.role, typeof m.content === 'string' ? m.content : '[语音]');
+    });
+  }
 }
 
 // ── 学习分析 ──
