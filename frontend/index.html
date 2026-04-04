@@ -1281,6 +1281,7 @@ async function switchResource(name, el) {
               onclick="askAboutSection('${name}','${ch.name}','${s}')">${s}</span>`
           ).join('')}
         </div>
+        <div id="knotes-${ch.id}" style="margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
           <button class="btn btn-primary" style="font-size:11px;padding:6px 12px" onclick="generateChapterNotes('${name}','${ch.name}','notes-${ch.id}')">📝 生成详细笔记</button>
           <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" onclick="generateChapterQuiz('${name}','${ch.name}','notes-${ch.id}')">📋 生成练习题</button>
@@ -1294,6 +1295,40 @@ async function switchResource(name, el) {
   });
 
   document.getElementById('resourceContent').innerHTML = html;
+
+  // 加载每个章节的知识点卡片
+  (subj.chapters||[]).forEach(async (ch) => {
+    try {
+      const resp = await fetch(`/api/resources/chapter-notes?subject=${encodeURIComponent(name)}&chapter=${encodeURIComponent(ch.name)}`);
+      const note = await resp.json();
+      const container = document.getElementById(`knotes-${ch.id}`);
+      if (!container || !note.key_points || note.key_points.length === 0) return;
+      const stars = '★'.repeat(note.difficulty) + '☆'.repeat(5 - note.difficulty);
+      container.innerHTML = `
+        <div style="background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(168,85,247,.04)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <div style="font-size:13px;font-weight:600;color:var(--accent)">${note.summary}</div>
+            <div style="font-size:11px;color:var(--orange)">${stars}</div>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:250px">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">📌 核心知识点</div>
+              ${note.key_points.map(p => `<div style="font-size:12px;line-height:1.8;color:var(--text);padding-left:8px;border-left:2px solid var(--accent);margin-bottom:4px">${p}</div>`).join('')}
+            </div>
+            <div style="min-width:200px">
+              ${note.formulas.length > 0 ? `
+                <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">📐 核心公式</div>
+                ${note.formulas.map(f => `<div style="font-size:12px;line-height:1.8;color:var(--text);margin-bottom:2px">${f}</div>`).join('')}
+              ` : ''}
+              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;margin-top:8px;font-weight:600">⚠️ 考试技巧</div>
+              ${note.exam_tips.map(t => `<div style="font-size:11px;line-height:1.6;color:var(--red);margin-bottom:3px">• ${t}</div>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      // 渲染LaTeX
+      setTimeout(() => { renderMathInElement(container, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); }, 100);
+    } catch(e) {}
+  });
 
   // 按章节分别加载视频资源
   (subj.chapters||[]).forEach(async (ch) => {

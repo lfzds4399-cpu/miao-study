@@ -1,9 +1,10 @@
-"""课程资源 + 公式速查 + B站实时搜索"""
+"""课程资源 + 公式速查 + B站实时搜索 + 知识点整合"""
 
 from fastapi import APIRouter
 import requests
 import urllib.parse
 from config import SUBJECTS
+from data.chapter_notes import CHAPTER_NOTES
 
 router = APIRouter(prefix="/api/resources", tags=["资源库"])
 
@@ -19,6 +20,22 @@ def get_subjects():
             "color": info["color"],
             "chapters": info["chapters"],
         })
+    return result
+
+
+@router.get("/chapter-notes")
+def get_chapter_notes(subject: str = "", chapter: str = ""):
+    """获取章节知识点整合"""
+    if subject and chapter:
+        key = f"{subject}|{chapter}"
+        note = CHAPTER_NOTES.get(key)
+        if note:
+            return note
+        return {"summary": "", "key_points": [], "formulas": [], "exam_tips": [], "difficulty": 0}
+    # 返回所有
+    result = {}
+    for key, val in CHAPTER_NOTES.items():
+        result[key] = val
     return result
 
 
