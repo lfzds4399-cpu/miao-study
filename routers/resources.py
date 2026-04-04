@@ -1,7 +1,9 @@
-"""课程资源 + 公式速查"""
+"""课程资源 + 公式速查 + B站实时搜索"""
 
 from fastapi import APIRouter
-from config import SUBJECTS, VIDEO_RESOURCES
+import requests
+import urllib.parse
+from config import SUBJECTS
 
 router = APIRouter(prefix="/api/resources", tags=["资源库"])
 
@@ -22,16 +24,91 @@ def get_subjects():
 
 @router.get("/videos")
 def get_videos(subject: str = "", chapter: str = ""):
-    """获取视频资源"""
-    result = []
-    for subj, videos in VIDEO_RESOURCES.items():
-        if subject and subj != subject:
-            continue
-        for v in videos:
-            if chapter and v["chapter"] != chapter:
-                continue
-            result.append({"subject": subj, **v})
-    return result
+    """实时从B站搜索教学视频"""
+    if not subject or not chapter:
+        return []
+
+    keyword = f"高中{subject} {chapter} 精讲"
+    try:
+        encoded = urllib.parse.quote(keyword)
+        resp = requests.get(
+            f"https://api.bilibili.com/x/web-interface/search/type",
+            params={
+                "search_type": "video",
+                "keyword": keyword,
+                "order": "totalrank",
+                "duration": 4,  # 60分钟以上的长视频优先
+                "page": 1,
+                "pagesize": 6,
+            },
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Referer": "https://www.bilibili.com",
+            },
+            timeout=10,
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            results = data.get("data", {}).get("result", [])
+            videos = []
+            for v in results[:6]:
+                title = v.get("title", "").replace('<em class="keyword">', "").replace("</em>", "")
+                bvid = v.get("bvid", "")
+                author = v.get("author", "")
+                play = v.get("play", 0)
+                duration = v.get("duration", "")
+                if not bvid:
+                    continue
+                videos.append({
+                    "subject": subject,
+                    "chapter": chapter,
+                    "title": title,
+                    "platform": "bilibili",
+                    "url": f"https://www.bilibili.com/video/{bvid}/",
+                    "teacher": author,
+                    "play": play,
+                    "duration": duration,
+                    "rating": round(min(5.0, 3.5 + play / 100000), 1),
+                })
+            return videos
+    except Exception as e:
+        pass
+
+    # B站API失败时返回搜索链接 + 权威平台链接
+    search_url = f"https://search.bilibili.com/all?keyword={urllib.parse.quote(keyword)}&order=totalrank&duration=4"
+    return _get_official_resources(subject, chapter) + [{
+        "subject": subject,
+        "chapter": chapter,
+        "title": f"🔍 在B站搜索更多「{keyword}」",
+        "platform": "bilibili",
+        "url": search_url,
+        "teacher": "B站搜索",
+        "play": 0,
+        "duration": "",
+        "rating": 0,
+    }]
+
+
+def _get_official_resources(subject, chapter):
+    """权威教育平台资源（国家中小学智慧教育平台等）"""
+    keyword = urllib.parse.quote(f"高中 {subject} {chapter}")
+    resources = [
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"📕 国家中小学智慧教育平台 · {subject}{chapter}",
+            "platform": "国家平台",
+            "url": f"https://basic.smartedu.cn/syncClassroom/classActivity?keyword={keyword}",
+            "teacher": "教育部官方", "play": 0, "duration": "", "rating": 5.0,
+        },
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"📗 学科网 · {subject}{chapter}课件/教案",
+            "platform": "学科网",
+            "url": f"https://www.zxxk.com/search?keyword={keyword}",
+            "teacher": "学科网", "play": 0, "duration": "", "rating": 4.8,
+        },
+    ]
+    return resources
 
 
 # 各科重要公式速查
