@@ -90,22 +90,51 @@ def get_videos(subject: str = "", chapter: str = ""):
 
 
 def _get_official_resources(subject, chapter):
-    """权威教育平台资源（国家中小学智慧教育平台等）"""
+    """多平台教育资源"""
     keyword = urllib.parse.quote(f"高中 {subject} {chapter}")
+    keyword_bili = urllib.parse.quote(f"高中{subject} {chapter} 精讲 全套")
     resources = [
         {
             "subject": subject, "chapter": chapter,
             "title": f"📕 国家中小学智慧教育平台 · {subject}{chapter}",
             "platform": "国家平台",
-            "url": f"https://basic.smartedu.cn/syncClassroom/classActivity?keyword={keyword}",
-            "teacher": "教育部官方", "play": 0, "duration": "", "rating": 5.0,
+            "url": f"https://basic.smartedu.cn/syncClassroom?keyword={urllib.parse.quote(f'{subject} {chapter}')}",
+            "teacher": "教育部官方", "play": 0, "duration": "官方课程", "rating": 5.0,
         },
         {
             "subject": subject, "chapter": chapter,
-            "title": f"📗 学科网 · {subject}{chapter}课件/教案",
+            "title": f"🎬 B站搜索 · {subject}{chapter}名师精讲",
+            "platform": "bilibili",
+            "url": f"https://search.bilibili.com/all?keyword={keyword_bili}&order=totalrank&duration=4",
+            "teacher": "B站搜索", "play": 0, "duration": "长视频", "rating": 4.9,
+        },
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"📗 学科网 · {subject}{chapter}课件/试卷",
             "platform": "学科网",
             "url": f"https://www.zxxk.com/search?keyword={keyword}",
-            "teacher": "学科网", "play": 0, "duration": "", "rating": 4.8,
+            "teacher": "学科网", "play": 0, "duration": "课件", "rating": 4.8,
+        },
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"📘 知乎 · {subject}{chapter}学习方法",
+            "platform": "知乎",
+            "url": f"https://www.zhihu.com/search?type=content&q={urllib.parse.quote(f'高中{subject} {chapter} 怎么学')}",
+            "teacher": "知乎", "play": 0, "duration": "经验", "rating": 4.5,
+        },
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"🎓 中国大学MOOC · {subject}相关课程",
+            "platform": "MOOC",
+            "url": f"https://www.icourse163.org/search.htm?search={urllib.parse.quote(f'高中{subject}')}#/",
+            "teacher": "大学MOOC", "play": 0, "duration": "系统课", "rating": 4.7,
+        },
+        {
+            "subject": subject, "chapter": chapter,
+            "title": f"📺 西瓜视频 · {subject}{chapter}教学",
+            "platform": "西瓜视频",
+            "url": f"https://www.ixigua.com/search/{urllib.parse.quote(f'高中{subject} {chapter}')}",
+            "teacher": "西瓜视频", "play": 0, "duration": "视频", "rating": 4.3,
         },
     ]
     return resources

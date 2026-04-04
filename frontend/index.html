@@ -1269,45 +1269,132 @@ async function switchResource(name, el) {
   if (!subj) return;
 
   let html = '';
-  // 章节列表
   (subj.chapters || []).forEach(ch => {
     html += `<div class="chapter-section">
-      <div class="chapter-title">${subj.icon} ${ch.name}</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
-        ${(ch.sections||[]).map(s =>
-          `<span style="padding:4px 10px;border-radius:6px;font-size:11px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);cursor:pointer"
-            onclick="askAboutSection('${name}','${ch.name}','${s}')">${s}</span>`
-        ).join('')}
-      </div>`;
-
-    // 该章节的视频
-    html += `<div id="videos-${ch.id}"></div>`;
-    html += `</div>`;
+      <div class="chapter-title" style="cursor:pointer" onclick="toggleChapter('${ch.id}')">${subj.icon} ${ch.name} <span style="font-size:12px;color:var(--text3)">▼</span></div>
+      <div id="chapter-body-${ch.id}">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
+          ${(ch.sections||[]).map(s =>
+            `<span style="padding:5px 12px;border-radius:8px;font-size:11px;background:rgba(255,255,255,.8);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s"
+              onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+              onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'"
+              onclick="askAboutSection('${name}','${ch.name}','${s}')">${s}</span>`
+          ).join('')}
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" style="font-size:11px;padding:6px 12px" onclick="generateChapterNotes('${name}','${ch.name}','notes-${ch.id}')">📝 生成详细笔记</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" onclick="generateChapterQuiz('${name}','${ch.name}','notes-${ch.id}')">📋 生成练习题</button>
+        </div>
+        <div id="notes-${ch.id}"></div>
+        <div id="videos-${ch.id}" style="margin-top:8px">
+          <div style="color:var(--text3);font-size:12px;padding:8px">⏳ 加载资源中...</div>
+        </div>
+      </div>
+    </div>`;
   });
 
   document.getElementById('resourceContent').innerHTML = html;
 
-  // 加载视频
-  try {
-    const resp = await fetch(`/api/resources/videos?subject=${name}`);
-    const videos = await resp.json();
-    (subj.chapters||[]).forEach(ch => {
-      const chVideos = videos.filter(v => v.chapter === ch.name);
+  // 按章节分别加载视频资源
+  (subj.chapters||[]).forEach(async (ch) => {
+    try {
+      const resp = await fetch(`/api/resources/videos?subject=${encodeURIComponent(name)}&chapter=${encodeURIComponent(ch.name)}`);
+      const videos = await resp.json();
       const container = document.getElementById(`videos-${ch.id}`);
       if (!container) return;
-      container.innerHTML = chVideos.map(v =>
+      if (videos.length === 0) {
+        container.innerHTML = '<div style="color:var(--text3);font-size:12px">暂无视频资源</div>';
+        return;
+      }
+      container.innerHTML = videos.map(v =>
         `<a href="${v.url}" target="_blank" class="video-card">
-          <div class="video-icon">▶️</div>
+          <div class="video-icon" style="font-size:20px">${v.platform==='bilibili'?'📺':v.platform==='国家平台'?'📕':v.platform==='学科网'?'📗':v.platform==='知乎'?'📘':v.platform==='MOOC'?'🎓':'📺'}</div>
           <div class="video-info">
             <div class="video-title">${v.title}</div>
-            <div class="video-teacher">${v.teacher} · ${v.platform}</div>
+            <div class="video-teacher">${v.teacher} · ${v.duration||v.platform}</div>
           </div>
-          <div class="video-rating">⭐ ${v.rating}</div>
+          ${v.play > 0 ? `<div style="font-size:11px;color:var(--text3)">${v.play > 10000 ? Math.round(v.play/10000)+'万' : v.play}播放</div>` : ''}
         </a>`
       ).join('');
+    } catch(e) {
+      const container = document.getElementById(`videos-${ch.id}`);
+      if (container) container.innerHTML = '<div style="color:var(--text3);font-size:12px">资源加载失败</div>';
+    }
+  });
+}
+
+function toggleChapter(id) {
+  const body = document.getElementById('chapter-body-' + id);
+  if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
+}
+
+async function generateChapterNotes(subject, chapter, targetId) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.8);border-radius:12px;border:1px solid var(--border)"><div style="color:var(--accent)">📝 喵老师正在为你生成「'+chapter+'」的详细笔记...</div></div>';
+
+  const prompt = `请为高中${subject}「${chapter}」生成一份完整的学习笔记，包含：
+1. 核心概念和定义（简洁清晰）
+2. 重要公式汇总（用LaTeX）
+3. 关键知识点梳理
+4. 1-2道典型例题（含详细解题步骤）
+5. 易错点和考试技巧
+要求精炼实用，适合高考复习。`;
+
+  try {
+    const resp = await fetch('/api/ai/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages:[{role:'user',content:prompt}], subject:subject}),
     });
-  } catch(e) {}
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      for (const line of decoder.decode(value).split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.9);border-radius:12px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
+        } catch(e) {}
+      }
+    }
+    setTimeout(() => { renderMathInElement(target, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); }, 100);
+  } catch(e) { target.innerHTML = '<div style="color:var(--red)">生成失败: '+e.message+'</div>'; }
+}
+
+async function generateChapterQuiz(subject, chapter, targetId) {
+  const target = document.getElementById(targetId);
+  if (!target) return;
+  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.8);border-radius:12px;border:1px solid var(--border)"><div style="color:var(--accent)">📋 喵老师正在出题...</div></div>';
+
+  const prompt = `请为高中${subject}「${chapter}」出5道练习题：
+- 3道选择题（4个选项，标注正确答案）
+- 2道计算/简答题（附详细解答过程）
+难度适中偏高考，每题标注考查的知识点。`;
+
+  try {
+    const resp = await fetch('/api/ai/chat', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages:[{role:'user',content:prompt}], subject:subject}),
+    });
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      for (const line of decoder.decode(value).split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.9);border-radius:12px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
+        } catch(e) {}
+      }
+    }
+    setTimeout(() => { renderMathInElement(target, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); }, 100);
+  } catch(e) { target.innerHTML = '<div style="color:var(--red)">出题失败: '+e.message+'</div>'; }
 }
 
 function askAboutSection(subject, chapter, section) {
