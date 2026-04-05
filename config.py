@@ -32,6 +32,18 @@ def get_key(name: str) -> str:
 def anthropic_key() -> str:
     return get_key("ANTHROPIC_API_KEY")
 
+def deepseek_key() -> str:
+    return get_key("DEEPSEEK_API_KEY")
+
+def openai_key() -> str:
+    return get_key("OPENAI_API_KEY")
+
+def ai_provider() -> str:
+    """返回当前使用的AI提供商: deepseek / anthropic"""
+    if deepseek_key():
+        return "deepseek"
+    return "anthropic"
+
 
 # ── 高中科目与章节体系（高一+高二） ──
 SUBJECTS = {
