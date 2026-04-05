@@ -612,68 +612,98 @@ body {
 @media (max-width: 768px) {
   .sidebar { display:none !important; }
   .app { flex-direction:column; }
-  .main { width:100%; height:calc(100vh - 64px); }
-  .main-content { padding:16px !important; }
-  .main-header { padding:12px 16px; }
-  .main-title { font-size:16px; }
-  .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap:10px; }
-  .quick-actions { grid-template-columns: repeat(2, 1fr); gap:8px; }
-  .quick-btn { padding:12px; }
-  .quick-btn .qicon { width:36px; height:36px; }
+  .main { width:100%; height:calc(100vh - 56px); }
+  .main-content { padding:14px !important; padding-bottom:20px !important; }
+  .main-header { padding:10px 14px; }
+  .main-title { font-size:15px; }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap:8px; }
+  .quick-actions { grid-template-columns: repeat(3, 1fr); gap:6px; }
+  .quick-btn { padding:10px; flex-direction:column; text-align:center; gap:6px; }
+  .quick-btn .qicon { width:32px; height:32px; }
+  .quick-btn .qlabel { font-size:12px; }
+  .quick-btn .qdesc { display:none; }
   .notes-layout { flex-direction:column; }
-  .notes-list { width:100%; border-right:none; border-bottom:1px solid var(--border); padding-right:0; padding-bottom:12px; max-height:180px; }
-  .daily-card { flex-direction:column; text-align:center; gap:12px; }
-  .daily-cat { width:70px; height:70px; }
-  .stat-card { padding:14px; }
-  .stat-value { font-size:22px; }
-  .chat-input-row { gap:4px; }
-  .chat-btn { width:38px; height:38px; border-radius:10px; }
-  .chat-input { padding:10px 12px; font-size:13px; }
-  .msg { max-width:92%; padding:10px 14px; font-size:13px; }
+  .notes-list { width:100%; border-right:none; border-bottom:1px solid var(--border); padding-right:0; padding-bottom:10px; max-height:160px; }
+  .daily-card { flex-direction:column; text-align:center; gap:10px; padding:14px; }
+  .daily-cat { width:60px; height:60px; }
+  .daily-quote-text { font-size:13px; }
+  .stat-card { padding:12px; }
+  .stat-value { font-size:20px; }
+  .stat-label { font-size:11px; }
+  .chat-input-row { gap:3px; }
+  .chat-btn { width:36px; height:36px; border-radius:10px; }
+  .chat-input { padding:9px 10px; font-size:13px; border-radius:12px; }
+  .msg { max-width:92%; padding:10px 12px; font-size:13px; }
   .wrong-grid { grid-template-columns: 1fr; }
-  .resource-tabs { gap:4px; }
-  .resource-tab { padding:6px 12px; font-size:12px; }
-  .formula-card { padding:12px; }
-  .chapter-title { font-size:14px; }
-  .video-card { padding:10px; }
-  .pomo-circle { width:200px; height:200px; }
-  .pomo-time { font-size:42px; }
-  .pomodoro { padding-top:20px; }
+  .resource-tabs { gap:3px; overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; }
+  .resource-tab { padding:6px 10px; font-size:11px; white-space:nowrap; flex-shrink:0; }
+  .formula-card { padding:10px; }
+  .chapter-title { font-size:13px; }
+  .chapter-section { margin-bottom:16px; }
+  .video-card { padding:8px 10px; }
+  .video-title { font-size:12px; }
+  .pomo-circle { width:180px; height:180px; }
+  .pomo-time { font-size:38px; }
+  .pomodoro { padding-top:16px; }
+  .section-title { font-size:13px; margin-bottom:8px; }
 
-  /* Bottom nav bar */
+  /* Mobile info bar (replaces sidebar info) */
+  .mobile-info { display:flex !important; }
+
+  /* Bottom nav bar - 5 main tabs + more */
   .mobile-nav {
     display:flex !important;
     position:fixed; bottom:0; left:0; right:0;
-    background:rgba(255,255,255,.95);
+    background:rgba(255,255,255,.97);
     backdrop-filter:blur(12px);
     border-top:1px solid var(--border);
-    z-index:100; height:64px;
+    z-index:100; height:56px;
     justify-content:space-around; align-items:center;
-    padding:0 4px; padding-bottom:env(safe-area-inset-bottom, 0px);
+    padding:0; padding-bottom:env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -2px 12px rgba(0,0,0,.04);
   }
   .mobile-nav-item {
     display:flex; flex-direction:column; align-items:center;
-    gap:2px; padding:6px 0; cursor:pointer;
-    color:var(--text3); font-size:10px; transition:color .2s;
+    gap:1px; padding:4px 0; cursor:pointer;
+    color:var(--text3); font-size:9px; transition:color .2s;
     flex:1; text-align:center;
   }
   .mobile-nav-item.active { color:var(--accent); font-weight:600; }
-  .mobile-nav-item svg { width:20px; height:20px; }
+  .mobile-nav-item svg { width:18px; height:18px; }
+
+  /* More menu */
+  .mobile-more-menu {
+    display:none; position:fixed; bottom:56px; right:8px;
+    background:rgba(255,255,255,.97); backdrop-filter:blur(12px);
+    border:1px solid var(--border); border-radius:14px;
+    padding:8px; z-index:101; box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+    min-width:140px;
+  }
+  .mobile-more-menu.show { display:block; animation:fadeIn .2s ease-out; }
+  .mobile-more-item {
+    display:flex; align-items:center; gap:8px; padding:10px 12px;
+    border-radius:10px; cursor:pointer; font-size:13px; color:var(--text2);
+    transition:background .15s;
+  }
+  .mobile-more-item:hover, .mobile-more-item:active { background:rgba(176,108,224,.06); color:var(--accent); }
+  .mobile-more-item svg { width:16px; height:16px; }
 
   /* Voice call responsive */
-  .vc-avatar { width:90px; height:90px; }
-  .vc-avatar svg { width:40px; height:40px; }
-  .vc-transcript { max-width:90vw; font-size:13px; }
-  .vc-btn { width:54px; height:54px; }
+  .vc-avatar { width:80px; height:80px; }
+  .vc-avatar svg { width:36px; height:36px; }
+  .vc-transcript { max-width:90vw; font-size:12px; padding:12px; }
+  .vc-btn { width:50px; height:50px; }
+  .vc-name { font-size:16px; }
+  #vcCameraBox { width:220px !important; height:165px !important; }
 }
 
 /* -- Small phones -- */
 @media (max-width: 390px) {
-  .dashboard-grid { grid-template-columns: 1fr 1fr; gap:8px; }
-  .quick-actions { grid-template-columns: 1fr 1fr; gap:6px; }
-  .quick-btn .qdesc { display:none; }
-  .daily-quote-text { font-size:13px; }
-  .section-title { font-size:13px; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr; gap:6px; }
+  .quick-actions { grid-template-columns: repeat(3, 1fr); gap:4px; }
+  .stat-value { font-size:18px; }
+  .mobile-nav-item { font-size:8px; }
+  .mobile-nav-item svg { width:16px; height:16px; }
 }
 </style>
 </head>
@@ -784,6 +814,25 @@ body {
         <div style="font-size:12px;color:var(--text3)" id="todayDate"></div>
       </div>
       <div class="main-content">
+        <!-- Mobile info bar (only visible on mobile, replaces sidebar info) -->
+        <div class="mobile-info" style="display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:140px;background:linear-gradient(135deg,rgba(248,187,209,.15),rgba(225,190,231,.15));border:1px solid rgba(225,190,231,.2);border-radius:12px;padding:10px 12px;font-size:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><span style="font-size:22px;font-weight:700" id="mWeatherTemp">--</span>°C</div>
+              <div style="font-size:11px;color:var(--text2)" id="mWeatherDesc">加载中</div>
+            </div>
+          </div>
+          <div style="flex:1;min-width:100px;background:linear-gradient(135deg,rgba(248,187,209,.12),rgba(255,224,178,.1));border:1px solid rgba(248,187,209,.15);border-radius:12px;padding:10px 12px;text-align:center">
+            <div style="font-size:10px;color:var(--text3)">距高考</div>
+            <div style="font-size:24px;font-weight:800;background:linear-gradient(135deg,#ce93d8,#f48fb1);-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="mCountdown">--</div>
+            <div style="font-size:10px;color:var(--text3)">天</div>
+          </div>
+          <div style="flex:1;min-width:140px;background:linear-gradient(135deg,rgba(206,147,216,.1),rgba(179,157,219,.1));border:1px solid rgba(206,147,216,.15);border-radius:12px;padding:10px 12px;font-size:11px">
+            <div style="color:var(--text3);font-size:10px;margin-bottom:2px">目标大学</div>
+            <div style="color:var(--text);line-height:1.5">南大·东南·苏大</div>
+          </div>
+        </div>
+
         <!-- Daily quote + cat -->
         <div class="daily-card" id="dailyCard" style="display:none">
           <div class="daily-quote">
@@ -1043,17 +1092,24 @@ body {
   </div>
 </div>
 
-<!-- Mobile bottom nav -->
+<!-- Mobile bottom nav (5 tabs + more) -->
 <div class="mobile-nav" style="display:none" id="mobileNav">
   <div class="mobile-nav-item active" onclick="mobileSwitchPage('dashboard',this)"><i data-lucide="layout-dashboard"></i><span>首页</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('ai',this)"><i data-lucide="bot"></i><span>栀老师</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('resources',this)"><i data-lucide="book-open"></i><span>资源</span></div>
-  <div class="mobile-nav-item" onclick="mobileSwitchPage('formulas',this)"><i data-lucide="sigma"></i><span>公式</span></div>
-  <div class="mobile-nav-item" onclick="mobileSwitchPage('mistakes',this)"><i data-lucide="alert-triangle"></i><span>易错</span></div>
-  <div class="mobile-nav-item" onclick="mobileSwitchPage('graph',this)"><i data-lucide="chart-spline"></i><span>画图</span></div>
-  <div class="mobile-nav-item" onclick="mobileSwitchPage('notes',this)"><i data-lucide="notebook-pen"></i><span>笔记</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('wrong',this)"><i data-lucide="circle-x"></i><span>错题</span></div>
-  <div class="mobile-nav-item" onclick="mobileSwitchPage('board',this)"><i data-lucide="message-square-text"></i><span>留言</span></div>
+  <div class="mobile-nav-item" onclick="toggleMobileMore(event)"><i data-lucide="menu"></i><span>更多</span></div>
+</div>
+
+<!-- Mobile more menu -->
+<div class="mobile-more-menu" id="mobileMoreMenu">
+  <div class="mobile-more-item" onclick="mobileSwitchPage('formulas');closeMobileMore()"><i data-lucide="sigma"></i> 公式速查</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('mistakes');closeMobileMore()"><i data-lucide="alert-triangle"></i> 易错点</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('graph');closeMobileMore()"><i data-lucide="chart-spline"></i> 画图计算</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('notes');closeMobileMore()"><i data-lucide="notebook-pen"></i> 我的笔记</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('analysis');closeMobileMore()"><i data-lucide="bar-chart-3"></i> 学习分析</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('pomodoro');closeMobileMore()"><i data-lucide="timer"></i> 番茄钟</div>
+  <div class="mobile-more-item" onclick="mobileSwitchPage('board');closeMobileMore()"><i data-lucide="message-square-text"></i> 留言板</div>
 </div>
 
 <!-- Voice/Video call overlay -->
@@ -1137,6 +1193,8 @@ async function init() {
   const gaokao = new Date(2027, 5, 7);
   const diff = Math.ceil((gaokao - today) / (1000 * 60 * 60 * 24));
   document.getElementById('countdownDays').textContent = diff;
+  const mC = document.getElementById('mCountdown');
+  if (mC) mC.textContent = diff;
 
   loadWeather();
   loadSubjects();
@@ -1243,6 +1301,11 @@ async function loadWeather() {
     if (data.error) return;
     document.getElementById('weatherTemp').textContent = data.temp;
     document.getElementById('weatherDesc').textContent = `${data.city} · ${data.desc}`;
+    // Mobile weather
+    const mT = document.getElementById('mWeatherTemp');
+    const mD = document.getElementById('mWeatherDesc');
+    if (mT) mT.textContent = data.temp;
+    if (mD) mD.textContent = `${data.desc}`;
     const weatherIconMap = {'晴':'sun','多云':'cloud-sun','阴':'cloud','小雨':'cloud-drizzle','中雨':'cloud-rain','大雨':'cloud-rain','雨':'cloud-rain','雪':'snowflake','雾':'cloud-fog','雷暴':'cloud-lightning'};
     const iconName = weatherIconMap[data.desc] || 'cloud-sun';
     document.getElementById('weatherIcon').innerHTML = `<i data-lucide="${iconName}" style="width:36px;height:36px;color:var(--orange)"></i>`;
@@ -2517,8 +2580,26 @@ function graphPreset(latex) {
 function mobileSwitchPage(name, el) {
   switchPage(name);
   document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
-  el?.classList.add('active');
+  if (el && el.classList) el.classList.add('active');
 }
+
+function toggleMobileMore(e) {
+  e?.stopPropagation();
+  const menu = document.getElementById('mobileMoreMenu');
+  menu.classList.toggle('show');
+  lucide.createIcons();
+}
+
+function closeMobileMore() {
+  document.getElementById('mobileMoreMenu')?.classList.remove('show');
+}
+
+// Close more menu when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.mobile-more-menu') && !e.target.closest('.mobile-nav-item:last-child')) {
+    closeMobileMore();
+  }
+});
 
 // ── Goals (target/estimate score) ──
 function saveGoals() {

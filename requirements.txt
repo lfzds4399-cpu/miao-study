@@ -1,7 +1,8 @@
 fastapi
-uvicorn
+uvicorn[standard]
 sqlalchemy
 anthropic
 requests
 httpx
 python-multipart
+edge-tts
