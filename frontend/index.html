@@ -1883,23 +1883,15 @@ async function switchResource(name, el) {
         return;
       }
       container.innerHTML = videos.map(v => {
-        const hasBV = v.platform === 'bilibili' && v.url.includes('/video/');
-        const platformIcons = {'bilibili':'play-circle','国家平台':'graduation-cap','学科网':'file-text','知乎':'message-circle','MOOC':'school','西瓜视频':'tv'};
-        const iconName = platformIcons[v.platform] || 'play-circle';
-        const platformColors = {'bilibili':'#fb7299','国家平台':'#1976d2','学科网':'#4caf50','知乎':'#0066ff','MOOC':'#8bc34a','西瓜视频':'#ff6040'};
+        const platformColors = {'bilibili':'#fb7299'};
         const color = platformColors[v.platform] || 'var(--accent)';
-        const safeTitle = v.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
-        const onclick = hasBV
-          ? `onclick="openBilibiliVideo('${v.url}','${safeTitle}');return false"`
-          : `onclick="openVideoEmbed('${v.url}','${safeTitle}');return false"`;
-        return `<a href="${v.url}" class="video-card" ${onclick}>
-          <div class="video-icon" style="background:${color}15"><i data-lucide="${iconName}" style="color:${color};width:18px;height:18px"></i></div>
+        return `<a href="${v.url}" target="_blank" class="video-card">
+          <div class="video-icon" style="background:${color}15"><i data-lucide="play-circle" style="color:${color};width:18px;height:18px"></i></div>
           <div class="video-info">
             <div class="video-title">${v.title}</div>
-            <div class="video-teacher">${v.teacher} · ${v.duration||v.platform}</div>
+            <div class="video-teacher">${v.teacher} · B站</div>
           </div>
-          ${v.play > 0 ? `<div style="font-size:11px;color:var(--text3)">${v.play > 10000 ? Math.round(v.play/10000)+'万' : v.play}播放</div>` : ''}
-          ${hasBV ? '<div style="font-size:10px;color:var(--accent);font-weight:600">站内播放</div>' : ''}
+          <div style="font-size:10px;color:#fb7299;font-weight:600">打开B站</div>
         </a>`;
       }).join('');
       lucide.createIcons();
