@@ -2452,9 +2452,17 @@ async function vcStartListening() {
 
     // 开始录音
     vcAudioChunks = [];
-    vcMediaRecorder = new MediaRecorder(vcMicStream, {
-      mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
-    });
+    // 选择Whisper最兼容的录音格式
+    let recorderOptions = {};
+    // 优先用不带opus的格式
+    const formats = ['audio/webm;codecs=pcm', 'audio/ogg;codecs=opus', 'audio/webm', 'audio/mp4', ''];
+    for (const fmt of formats) {
+      if (!fmt || MediaRecorder.isTypeSupported(fmt)) {
+        if (fmt) recorderOptions.mimeType = fmt;
+        break;
+      }
+    }
+    vcMediaRecorder = new MediaRecorder(vcMicStream, recorderOptions);
     vcMediaRecorder.ondataavailable = (e) => {
       if (e.data.size > 0) vcAudioChunks.push(e.data);
     };
@@ -2577,10 +2585,14 @@ async function vcAutoSend() {
   document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--text2)">识别语音中...</div>';
 
   try {
-    // 将录音转成WAV格式，确保Whisper兼容
-    const wavBlob = await convertToWav(audioBlob);
     const formData = new FormData();
-    formData.append('audio', new File([wavBlob], 'audio.wav', { type: 'audio/wav' }));
+    // 根据实际录音格式选择正确的文件名
+    const actualMime = (mimeType || '').split(';')[0].trim();
+    let fname = 'audio.webm';
+    if (actualMime.includes('ogg')) fname = 'audio.ogg';
+    else if (actualMime.includes('mp4')) fname = 'audio.mp4';
+    else if (actualMime.includes('wav') || mimeType.includes('pcm')) fname = 'audio.wav';
+    formData.append('audio', new File([audioBlob], fname, { type: actualMime || 'audio/webm' }));
     formData.append('subject', currentSubject);
     formData.append('history', JSON.stringify(vcMessages.slice(-20)));
     const frame = vcCaptureFrame();
