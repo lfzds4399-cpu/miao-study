@@ -2442,41 +2442,41 @@ async function vcToggleListening() {
 }
 
 async function vcStartListening() {
+  // 先请求麦克风权限
+  let stream;
   try {
-    vcMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch(e) {
+    document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--red)">麦克风权限被拒绝<br><span style="font-size:11px">请点击浏览器地址栏左侧的锁/权限图标，允许麦克风访问后刷新页面</span></div>';
+    return;
+  }
+
+  try {
+    vcMicStream = stream;
     vcListening = true;
     vcUpdateMicBtn();
 
-    // 设置音量分析器
+    // 一个AudioContext处理所有音频
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const source = audioCtx.createMediaStreamSource(vcMicStream);
+
+    // 音量分析器
     vcAnalyser = audioCtx.createAnalyser();
     vcAnalyser.fftSize = 512;
     source.connect(vcAnalyser);
 
-    // 开始录音
-    vcAudioChunks = [];
-    // 用ScriptProcessor直接录PCM数据，绕过MediaRecorder的编码问题
-    vcUseRawPCM = true;
+    // PCM录音（ScriptProcessor直接采集原始数据）
     vcPcmChunks = [];
-    const audioCtx2 = vcAnalyser.context || new (window.AudioContext || window.webkitAudioContext)();
-    const source2 = audioCtx2.createMediaStreamSource(vcMicStream);
-    vcScriptNode = audioCtx2.createScriptProcessor(4096, 1, 1);
+    vcScriptNode = audioCtx.createScriptProcessor(4096, 1, 1);
     vcScriptNode.onaudioprocess = function(e) {
       if (vcListening) {
-        const data = e.inputBuffer.getChannelData(0);
-        vcPcmChunks.push(new Float32Array(data));
+        vcPcmChunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
       }
     };
-    source2.connect(vcScriptNode);
-    vcScriptNode.connect(audioCtx2.destination);
-    vcPcmSampleRate = audioCtx2.sampleRate;
-    // MediaRecorder仅作备用，主要用PCM录音
-    vcMediaRecorder = new MediaRecorder(vcMicStream);
-    vcMediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) vcAudioChunks.push(e.data);
-    };
-    vcMediaRecorder.start(250);
+    source.connect(vcScriptNode);
+    vcScriptNode.connect(audioCtx.destination);
+    vcPcmSampleRate = audioCtx.sampleRate;
+
     vcHasVoice = false;
     vcSilenceStart = 0;
 
@@ -2484,20 +2484,16 @@ async function vcStartListening() {
     document.getElementById('vcAvatar').className = 'vc-avatar listening';
     document.getElementById('vcModeLabel').textContent = '说完话会自动识别';
 
-    // 开始音量监测循环
     vcMonitorAudio();
-
   } catch(e) {
-    document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--red)">无法访问麦克风，请检查浏览器权限</div>';
+    document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">音频初始化失败: ${e.message}</div>`;
   }
 }
 
 function vcStopListening() {
   vcListening = false;
   if (vcSilenceTimer) { clearTimeout(vcSilenceTimer); vcSilenceTimer = null; }
-  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
-    vcMediaRecorder.stop();
-  }
+  if (vcScriptNode) { try { vcScriptNode.disconnect(); } catch(e){} vcScriptNode = null; }
   if (vcMicStream) {
     vcMicStream.getTracks().forEach(t => t.stop());
     vcMicStream = null;
@@ -2571,9 +2567,6 @@ async function vcAutoSend() {
 
   // 停止录音
   if (vcScriptNode) { try { vcScriptNode.disconnect(); } catch(e){} vcScriptNode = null; }
-  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
-    try { vcMediaRecorder.stop(); } catch(e) {}
-  }
   if (vcMicStream) {
     vcMicStream.getTracks().forEach(t => t.stop());
     vcMicStream = null;
