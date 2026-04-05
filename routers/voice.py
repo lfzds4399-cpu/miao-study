@@ -199,14 +199,17 @@ async def voice_chat(
     # Step 1: Whisper STT
     audio_data = await audio.read()
     # 根据上传文件的类型确定扩展名（Whisper对此敏感）
-    ct = audio.content_type or ""
+    ct = (audio.content_type or "").split(";")[0].strip()  # 去掉 codecs=opus 等后缀
     fname = audio.filename or "audio.webm"
+    # Whisper支持的格式: flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, webm
     if "mp4" in ct or "mp4" in fname:
         upload_name, upload_ct = "audio.mp4", "audio/mp4"
-    elif "ogg" in ct:
+    elif "ogg" in ct or "opus" in (audio.content_type or ""):
         upload_name, upload_ct = "audio.ogg", "audio/ogg"
     elif "wav" in ct:
         upload_name, upload_ct = "audio.wav", "audio/wav"
+    elif "webm" in ct or "webm" in fname:
+        upload_name, upload_ct = "audio.webm", "audio/webm"
     else:
         upload_name, upload_ct = "audio.webm", "audio/webm"
 
