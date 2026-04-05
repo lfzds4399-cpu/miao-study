@@ -267,22 +267,22 @@ async def voice_chat(
 
     messages.append({"role": "user", "content": user_content})
 
-    # Keep last 20 messages to stay within context limits
-    if len(messages) > 20:
-        messages = messages[-20:]
+    # 只保留最近10条，减少token加快响应
+    if len(messages) > 10:
+        messages = messages[-10:]
 
     ai_client = anthropic.Anthropic(api_key=anthropic_key())
     ai_resp = ai_client.messages.create(
         model="claude-haiku-4-5-20251001",
-        max_tokens=400,
+        max_tokens=200,  # 语音回复要短，200token够了
         system=system,
         messages=messages,
     )
     ai_text = ai_resp.content[0].text
 
-    # Step 3: OpenAI TTS
+    # Step 3: OpenAI TTS（用tts-1快速模型，不用hd）
     clean_tts = clean_for_tts(ai_text)
-    async with httpx.AsyncClient(timeout=60) as http_client:
+    async with httpx.AsyncClient(timeout=30) as http_client:
         tts_resp = await http_client.post(
             f"{OPENAI_API}/audio/speech",
             headers={
@@ -290,11 +290,11 @@ async def voice_chat(
                 "Content-Type": "application/json",
             },
             json={
-                "model": "tts-1-hd",
-                "input": clean_tts[:2000],
+                "model": "tts-1",
+                "input": clean_tts[:500],
                 "voice": "onyx",
                 "response_format": "mp3",
-                "speed": 1.0,
+                "speed": 1.05,
             },
         )
 
