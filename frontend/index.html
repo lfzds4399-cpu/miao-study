@@ -1221,6 +1221,50 @@ let recognition = null;
 let isRecording = false;
 let cameraStream = null;
 
+// ── 自动学习时间追踪（全局） ──
+let trackingSubject = '';
+let trackingStart = 0;
+const STUDY_PAGES = ['ai','resources','formulas','mistakes','notes','wrong'];
+
+function startTracking(page) {
+  saveTracking();
+  if (STUDY_PAGES.includes(page)) {
+    trackingSubject = currentSubject === 'general' ? '综合' : currentSubject;
+    trackingStart = Date.now();
+  } else {
+    trackingStart = 0;
+  }
+}
+
+function saveTracking() {
+  if (!trackingStart) return;
+  const mins = Math.floor((Date.now() - trackingStart) / 60000);
+  if (mins >= 1) {
+    fetch('/api/progress/session', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
+    }).catch(() => {});
+  }
+  trackingStart = 0;
+}
+
+setInterval(() => {
+  if (trackingStart && STUDY_PAGES.includes(currentPage)) {
+    const mins = Math.floor((Date.now() - trackingStart) / 60000);
+    if (mins >= 5) {
+      fetch('/api/progress/session', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
+      }).catch(() => {});
+      trackingStart = Date.now();
+    }
+  }
+}, 5 * 60 * 1000);
+
+window.addEventListener('beforeunload', saveTracking);
+
 // Subject icon map (lucide icon names)
 const subjectIcons = {
   '语文':'book-open-text','数学':'calculator','英语':'languages','物理':'atom',
@@ -1265,53 +1309,6 @@ async function init() {
       if (isRecording) recognition.start();
     };
   }
-
-  // ── 自动学习时间追踪 ──
-  let trackingSubject = '';
-  let trackingStart = 0;
-  const STUDY_PAGES = ['ai','resources','formulas','mistakes','notes','wrong'];
-
-  function startTracking(page) {
-    // 结束上一次追踪
-    saveTracking();
-    if (STUDY_PAGES.includes(page)) {
-      trackingSubject = currentSubject === 'general' ? '综合' : currentSubject;
-      trackingStart = Date.now();
-    } else {
-      trackingStart = 0;
-    }
-  }
-
-  function saveTracking() {
-    if (!trackingStart) return;
-    const mins = Math.floor((Date.now() - trackingStart) / 60000);
-    if (mins >= 1) {
-      fetch('/api/progress/session', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
-      }).catch(() => {});
-    }
-    trackingStart = 0;
-  }
-
-  // 每5分钟自动保存一次（防止关页面丢失）
-  setInterval(() => {
-    if (trackingStart && STUDY_PAGES.includes(currentPage)) {
-      const mins = Math.floor((Date.now() - trackingStart) / 60000);
-      if (mins >= 5) {
-        fetch('/api/progress/session', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
-        }).catch(() => {});
-        trackingStart = Date.now(); // 重置
-      }
-    }
-  }, 5 * 60 * 1000);
-
-  // 页面关闭/刷新时保存
-  window.addEventListener('beforeunload', saveTracking);
 
   // Initialize Lucide icons
   lucide.createIcons();
@@ -1745,7 +1742,7 @@ async function restoreChat(chatId) {
     // 切换到对应科目
     if (data.subject && data.subject !== 'general') {
       currentSubject = data.subject;
-      document.querySelectorAll('#subjectBar .resource-tab').forEach(t => {
+      document.querySelectorAll('#subjectBar .subject-chip').forEach(t => {
         t.classList.toggle('active', t.textContent.trim().includes(data.subject));
       });
     }
@@ -2063,13 +2060,6 @@ function openBilibiliVideo(url, title) {
   window.open(url, '_blank');
 }
 
-function openVideoEmbed(url, title) {
-  document.getElementById('vmTitle').textContent = title;
-  document.getElementById('vmIframe').src = url;
-  document.getElementById('videoModal').classList.add('active');
-  lucide.createIcons();
-}
-
 function closeVideoModal() {
   document.getElementById('vmIframe').src = '';
   document.getElementById('videoModal').classList.remove('active');
@@ -2323,8 +2313,6 @@ let vcTimerInterval = null;
 let vcSeconds = 0;
 let vcListening = false;    // 是否正在监听
 let vcProcessing = false;
-let vcMediaRecorder = null;
-let vcAudioChunks = [];
 let vcCurrentAudio = null;
 let vcCameraStream = null;
 let vcCameraOn = false;
@@ -2333,58 +2321,12 @@ let vcAnalyser = null;
 let vcSilenceTimer = null;
 let vcSilenceStart = 0;
 let vcHasVoice = false;
-let vcUseRawPCM = false;
 let vcPcmChunks = [];
 let vcScriptNode = null;
 let vcPcmSampleRate = 16000;
 const VC_SILENCE_THRESHOLD = 25;   // 音量阈值（0-255），高一点过滤环境噪音
 const VC_SILENCE_DURATION = 2000;  // 静音多久后自动发送（ms），长一点避免误判
 const VC_MIN_RECORD_TIME = 1000;   // 最短录音时间（ms）
-
-// 将任意音频Blob转为WAV格式（Whisper 100%兼容）
-async function convertToWav(blob) {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const arrayBuffer = await blob.arrayBuffer();
-  let audioBuffer;
-  try {
-    audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-  } catch(e) {
-    // 解码失败，原样返回
-    return blob;
-  }
-  // 转单声道16bit PCM WAV
-  const numChannels = 1;
-  const sampleRate = audioBuffer.sampleRate;
-  const channelData = audioBuffer.getChannelData(0);
-  const length = channelData.length;
-  const buffer = new ArrayBuffer(44 + length * 2);
-  const view = new DataView(buffer);
-
-  function writeString(offset, str) {
-    for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-  }
-  writeString(0, 'RIFF');
-  view.setUint32(4, 36 + length * 2, true);
-  writeString(8, 'WAVE');
-  writeString(12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true); // PCM
-  view.setUint16(22, numChannels, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * numChannels * 2, true);
-  view.setUint16(32, numChannels * 2, true);
-  view.setUint16(34, 16, true);
-  writeString(36, 'data');
-  view.setUint32(40, length * 2, true);
-
-  let offset = 44;
-  for (let i = 0; i < length; i++) {
-    const s = Math.max(-1, Math.min(1, channelData[i]));
-    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
-    offset += 2;
-  }
-  return new Blob([buffer], { type: 'audio/wav' });
-}
 
 function startVoiceCall() {
   vcActive = true;
@@ -2598,7 +2540,11 @@ async function vcAutoSend() {
     }
     audioBlob = new Blob([wavBuf], {type:'audio/wav'});
   } else {
-    audioBlob = new Blob(vcAudioChunks, {type:'audio/webm'});
+    // PCM没有数据，说明录音失败
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>没录到声音，再试一次~';
+    vcProcessing = false;
+    setTimeout(() => { if (vcActive) vcStartListening(); }, 1500);
+    return;
   }
 
   if (audioBlob.size < 1000) {
