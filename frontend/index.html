@@ -2543,10 +2543,14 @@ async function vcAutoSend() {
     const frame = vcCaptureFrame();
     if (frame) formData.append('image', frame);
 
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000); // 60秒超时
     const resp = await fetch('/api/voice/chat', {
       method: 'POST',
       body: formData,
+      signal: controller.signal,
     });
+    clearTimeout(timeout);
     const data = await resp.json();
 
     if (data.error) {
@@ -2603,7 +2607,9 @@ async function vcAutoSend() {
     }
 
   } catch(e) {
-    document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
+    const errMsg = e.name === 'AbortError' ? '请求超时了，网络可能不太好' : `连接出问题了: ${e.message}`;
+    document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">${errMsg}</div>`;
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>再试一次~';
     vcProcessing = false;
     vcUpdateMicBtn();
     if (vcActive) setTimeout(() => vcStartListening(), 3000);
