@@ -1033,16 +1033,26 @@ body {
   <div class="mobile-nav-item" onclick="mobileSwitchPage('board',this)"><i data-lucide="message-square-text"></i><span>留言</span></div>
 </div>
 
-<!-- Voice call overlay -->
+<!-- Voice/Video call overlay -->
 <div class="voice-call-overlay" id="voiceCallOverlay">
   <div class="vc-subject-info" id="vcSubject">全科辅导</div>
   <div class="vc-timer" id="vcTimer">00:00</div>
+
+  <!-- Camera preview (video call mode) -->
+  <div id="vcCameraBox" style="display:none;width:280px;height:210px;border-radius:18px;overflow:hidden;border:3px solid rgba(255,255,255,.3);box-shadow:0 8px 32px rgba(0,0,0,.2);margin-bottom:16px;position:relative;background:#000">
+    <video id="vcCameraVideo" autoplay playsinline style="width:100%;height:100%;object-fit:cover"></video>
+    <canvas id="vcCameraCanvas" style="display:none"></canvas>
+    <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);padding:3px 10px;border-radius:10px;background:rgba(0,0,0,.5);color:#fff;font-size:10px">摄像头实时画面</div>
+  </div>
+
+  <!-- Avatar (audio-only mode) -->
   <div class="vc-avatar" id="vcAvatar"><i data-lucide="flower-2" style="width:56px;height:56px;color:#fff"></i></div>
   <div class="vc-name">栀老师</div>
   <div class="vc-status" id="vcStatus"><span class="dot green"></span>等待开始...</div>
-  <div class="vc-transcript" id="vcTranscript">点击下方麦克风按钮开始语音辅导~<br>直接说出你的问题，栀老师会语音回答你</div>
+  <div class="vc-transcript" id="vcTranscript">按住麦克风说话，松开后栀老师会回答你<br>点击摄像头按钮可以展示题目</div>
   <div class="vc-controls">
-    <button class="vc-btn mic" id="vcMicBtn" onclick="toggleVoiceCallMic()"><i data-lucide="mic"></i></button>
+    <button class="vc-btn" id="vcCamBtn" onclick="toggleVcCamera()" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);color:#fff" title="开关摄像头"><i data-lucide="video"></i></button>
+    <button class="vc-btn mic" id="vcMicBtn"><i data-lucide="mic"></i></button>
     <button class="vc-btn end" onclick="endVoiceCall()"><i data-lucide="phone-off"></i></button>
   </div>
 </div>
@@ -2065,21 +2075,20 @@ function resetPomodoro() {
   lucide.createIcons();
 }
 
-// ── Voice call ──
+// ── Voice/Video call (OpenAI Whisper + TTS + Camera) ──
 let vcActive = false;
-let vcRecognition = null;
-let vcSynth = window.speechSynthesis;
 let vcMessages = [];
 let vcTimerInterval = null;
 let vcSeconds = 0;
 let vcMicOn = true;
 let vcProcessing = false;
+let vcMediaRecorder = null;
+let vcAudioChunks = [];
+let vcCurrentAudio = null;
+let vcCameraStream = null;
+let vcCameraOn = false;
 
 function startVoiceCall() {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    alert('你的浏览器不支持语音功能，请使用 Chrome 浏览器');
-    return;
-  }
   vcActive = true;
   vcMessages = [];
   vcSeconds = 0;
@@ -2089,9 +2098,9 @@ function startVoiceCall() {
   const subj = subjects.find(s => s.name === currentSubject);
   document.getElementById('vcSubject').textContent = subj ? `${subj.name}辅导` : '全科辅导';
   document.getElementById('voiceCallOverlay').classList.add('active');
-  document.getElementById('vcTranscript').innerHTML = '请说出你的问题...';
-  document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
-  document.getElementById('vcAvatar').className = 'vc-avatar listening';
+  document.getElementById('vcTranscript').innerHTML = '按住麦克风按钮说话，松开后栀老师会回答你';
+  document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 按住说话';
+  document.getElementById('vcAvatar').className = 'vc-avatar';
   lucide.createIcons();
 
   vcTimerInterval = setInterval(() => {
@@ -2101,169 +2110,188 @@ function startVoiceCall() {
     document.getElementById('vcTimer').textContent = `${m}:${s}`;
   }, 1000);
 
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  vcRecognition = new SR();
-  vcRecognition.continuous = true;
-  vcRecognition.interimResults = true;
-  vcRecognition.lang = 'zh-CN';
-
-  let finalText = '';
-  let silenceTimer = null;
-
-  vcRecognition.onresult = function(e) {
+  // Setup push-to-talk on mic button
+  const micBtn = document.getElementById('vcMicBtn');
+  micBtn.onmousedown = micBtn.ontouchstart = function(e) {
+    e.preventDefault();
     if (vcProcessing) return;
-    let interim = '';
-    finalText = '';
-    for (let i = 0; i < e.results.length; i++) {
-      if (e.results[i].isFinal) {
-        finalText += e.results[i][0].transcript;
-      } else {
-        interim += e.results[i][0].transcript;
-      }
-    }
-    document.getElementById('vcTranscript').innerHTML =
-      (finalText ? `<div style="color:var(--accent);margin-bottom:4px">${finalText}</div>` : '') +
-      (interim ? `<div style="color:var(--text3)">...${interim}</div>` : '');
-
-    clearTimeout(silenceTimer);
-    if (finalText.trim()) {
-      silenceTimer = setTimeout(() => {
-        if (finalText.trim() && !vcProcessing) {
-          vcProcessAndReply(finalText.trim());
-          finalText = '';
-        }
-      }, 2000);
-    }
+    vcStartRecording();
   };
-
-  vcRecognition.onend = function() {
-    if (vcActive && vcMicOn && !vcProcessing) {
-      try { vcRecognition.start(); } catch(e) {}
-    }
+  micBtn.onmouseup = micBtn.ontouchend = function(e) {
+    e.preventDefault();
+    if (vcProcessing) return;
+    vcStopRecordingAndSend();
   };
-
-  vcRecognition.onerror = function(e) {
-    if (e.error === 'no-speech') return;
-  };
-
-  try { vcRecognition.start(); } catch(e) {}
 }
 
-async function vcProcessAndReply(userText) {
-  vcProcessing = true;
-  document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>栀老师正在思考...';
-  document.getElementById('vcAvatar').className = 'vc-avatar';
-
-  try { vcRecognition.stop(); } catch(e) {}
-  vcMessages.push({role: 'user', content: userText});
-
-  document.getElementById('vcTranscript').innerHTML =
-    `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
-    `<div style="color:var(--text2)">思考中...</div>`;
-
+async function vcStartRecording() {
   try {
-    const resp = await fetch('/api/ai/chat', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        messages: vcMessages.map(m => ({role: m.role, content: m.content})),
-        subject: currentSubject,
-      }),
-    });
-
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-
-    while (true) {
-      const {done, value} = await reader.read();
-      if (done) break;
-      const chunk = decoder.decode(value);
-      for (const line of chunk.split('\n')) {
-        if (!line.startsWith('data: ')) continue;
-        try {
-          const data = JSON.parse(line.slice(6));
-          if (data.text) fullText += data.text;
-        } catch(e) {}
-      }
-    }
-
-    vcMessages.push({role: 'assistant', content: fullText});
-
-    document.getElementById('vcTranscript').innerHTML =
-      `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
-      `<div style="font-size:13px;line-height:1.6">${fullText.slice(0, 500)}${fullText.length > 500 ? '...' : ''}</div>`;
-
-    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师正在说话...';
-    document.getElementById('vcAvatar').className = 'vc-avatar speaking';
-
-    let speakText = fullText
-      .replace(/\$[^$]+\$/g, '公式')
-      .replace(/```[\s\S]*?```/g, '代码')
-      .replace(/[#*_`]/g, '')
-      .replace(/\n+/g, '。')
-      .slice(0, 800);
-
-    await vcSpeak(speakText);
-
-  } catch(e) {
-    document.getElementById('vcTranscript').innerHTML =
-      `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
-  }
-
-  vcProcessing = false;
-  if (vcActive && vcMicOn) {
-    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    vcAudioChunks = [];
+    vcMediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+    vcMediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) vcAudioChunks.push(e.data);
+    };
+    vcMediaRecorder.start();
+    document.getElementById('vcStatus').innerHTML = '<span class="dot" style="background:#ef4444;animation:blink .5s infinite"></span>正在录音...松开发送';
     document.getElementById('vcAvatar').className = 'vc-avatar listening';
-    try { vcRecognition.start(); } catch(e) {}
+    document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,#ef4444,#f472b6)';
+  } catch(e) {
+    alert('无法访问麦克风，请检查权限');
   }
 }
 
-function vcSpeak(text) {
+async function vcStopRecordingAndSend() {
+  if (!vcMediaRecorder || vcMediaRecorder.state !== 'recording') return;
+
+  document.getElementById('vcMicBtn').style.background = '';
+
   return new Promise((resolve) => {
-    if (!vcSynth || !vcActive) { resolve(); return; }
-    vcSynth.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = 'zh-CN';
-    utter.rate = 1.1;
-    utter.pitch = 1.1;
-    const voices = vcSynth.getVoices();
-    const zhVoice = voices.find(v => v.lang.includes('zh') && v.name.includes('Female'))
-      || voices.find(v => v.lang.includes('zh-CN'))
-      || voices.find(v => v.lang.includes('zh'));
-    if (zhVoice) utter.voice = zhVoice;
-    utter.onend = resolve;
-    utter.onerror = resolve;
-    vcSynth.speak(utter);
-    setTimeout(resolve, 60000);
+    vcMediaRecorder.onstop = async () => {
+      // Stop mic stream
+      vcMediaRecorder.stream.getTracks().forEach(t => t.stop());
+
+      const audioBlob = new Blob(vcAudioChunks, { type: 'audio/webm' });
+      if (audioBlob.size < 1000) {
+        document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>录音太短，再试一次';
+        resolve();
+        return;
+      }
+
+      vcProcessing = true;
+      document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>栀老师正在思考...';
+      document.getElementById('vcAvatar').className = 'vc-avatar';
+      document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--text2)">识别语音中...</div>';
+
+      try {
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'audio.webm');
+        formData.append('subject', currentSubject);
+        formData.append('history', JSON.stringify(vcMessages));
+        // Capture camera frame if video call is on
+        const frame = vcCaptureFrame();
+        if (frame) formData.append('image', frame);
+
+        const resp = await fetch('/api/voice/chat', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await resp.json();
+
+        if (data.error) {
+          document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">${data.error}</div>`;
+          vcProcessing = false;
+          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
+          resolve();
+          return;
+        }
+
+        // Save messages
+        vcMessages.push({role: 'user', content: data.user_text});
+        vcMessages.push({role: 'assistant', content: data.ai_text});
+
+        // Show transcript
+        document.getElementById('vcTranscript').innerHTML =
+          `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${data.user_text}</div>` +
+          `<div style="font-size:13px;line-height:1.6">${data.ai_text.slice(0, 500)}${data.ai_text.length > 500 ? '...' : ''}</div>`;
+
+        // Play TTS audio
+        if (data.audio) {
+          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师正在说话...';
+          document.getElementById('vcAvatar').className = 'vc-avatar speaking';
+
+          const audioBytes = Uint8Array.from(atob(data.audio), c => c.charCodeAt(0));
+          const audioBlob2 = new Blob([audioBytes], { type: 'audio/mpeg' });
+          const audioUrl = URL.createObjectURL(audioBlob2);
+          vcCurrentAudio = new Audio(audioUrl);
+          vcCurrentAudio.onended = () => {
+            document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
+            document.getElementById('vcAvatar').className = 'vc-avatar';
+            vcProcessing = false;
+          };
+          vcCurrentAudio.play();
+        } else {
+          vcProcessing = false;
+          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
+        }
+
+      } catch(e) {
+        document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
+        vcProcessing = false;
+        document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
+      }
+      resolve();
+    };
+    vcMediaRecorder.stop();
   });
 }
 
-function toggleVoiceCallMic() {
-  vcMicOn = !vcMicOn;
-  const btn = document.getElementById('vcMicBtn');
-  if (vcMicOn) {
-    btn.className = 'vc-btn mic';
-    btn.innerHTML = '<i data-lucide="mic"></i>';
-    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
-    document.getElementById('vcAvatar').className = 'vc-avatar listening';
-    if (!vcProcessing) try { vcRecognition.start(); } catch(e) {}
+// Camera toggle for video call
+async function toggleVcCamera() {
+  const box = document.getElementById('vcCameraBox');
+  const btn = document.getElementById('vcCamBtn');
+  if (vcCameraOn) {
+    // Turn off
+    if (vcCameraStream) {
+      vcCameraStream.getTracks().forEach(t => t.stop());
+      vcCameraStream = null;
+    }
+    box.style.display = 'none';
+    document.getElementById('vcAvatar').style.display = '';
+    btn.style.background = 'linear-gradient(135deg,#3b82f6,#60a5fa)';
+    btn.innerHTML = '<i data-lucide="video"></i>';
+    vcCameraOn = false;
   } else {
-    btn.className = 'vc-btn mic muted';
-    btn.innerHTML = '<i data-lucide="mic-off"></i>';
-    document.getElementById('vcStatus').innerHTML = '<span class="dot"></span>麦克风已静音';
-    document.getElementById('vcAvatar').className = 'vc-avatar';
-    try { vcRecognition.stop(); } catch(e) {}
+    // Turn on
+    try {
+      vcCameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
+      });
+      document.getElementById('vcCameraVideo').srcObject = vcCameraStream;
+      box.style.display = 'block';
+      document.getElementById('vcAvatar').style.display = 'none';
+      btn.style.background = 'linear-gradient(135deg,#ef4444,#f472b6)';
+      btn.innerHTML = '<i data-lucide="video-off"></i>';
+      vcCameraOn = true;
+    } catch(e) {
+      alert('无法打开摄像头');
+    }
   }
   lucide.createIcons();
+}
+
+// Capture frame from video call camera
+function vcCaptureFrame() {
+  if (!vcCameraOn || !vcCameraStream) return '';
+  const video = document.getElementById('vcCameraVideo');
+  const canvas = document.getElementById('vcCameraCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  return canvas.toDataURL('image/jpeg', 0.7);
+}
+
+function toggleVoiceCallMic() {
+  // Push-to-talk mode - handled by mousedown/mouseup
 }
 
 function endVoiceCall() {
   vcActive = false;
   vcMicOn = false;
   clearInterval(vcTimerInterval);
-  try { vcRecognition.stop(); } catch(e) {}
-  try { vcSynth.cancel(); } catch(e) {}
+  if (vcCurrentAudio) { vcCurrentAudio.pause(); vcCurrentAudio = null; }
+  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
+    vcMediaRecorder.stream.getTracks().forEach(t => t.stop());
+    vcMediaRecorder.stop();
+  }
+  // Clean up camera
+  if (vcCameraStream) {
+    vcCameraStream.getTracks().forEach(t => t.stop());
+    vcCameraStream = null;
+  }
+  vcCameraOn = false;
+  document.getElementById('vcCameraBox').style.display = 'none';
+  document.getElementById('vcAvatar').style.display = '';
   document.getElementById('voiceCallOverlay').classList.remove('active');
 
   if (vcMessages.length > 0) {

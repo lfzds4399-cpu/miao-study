@@ -18,13 +18,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from routers import ai_tutor, notes, wrong_questions, progress, resources, messages
+from routers import ai_tutor, notes, wrong_questions, progress, resources, messages, voice
 app.include_router(ai_tutor.router)
 app.include_router(notes.router)
 app.include_router(wrong_questions.router)
 app.include_router(progress.router)
 app.include_router(resources.router)
 app.include_router(messages.router)
+app.include_router(voice.router)
 
 BASE_DIR = os.path.dirname(__file__)
 FRONTEND = os.path.join(BASE_DIR, "frontend")

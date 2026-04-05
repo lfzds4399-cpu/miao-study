@@ -3,3 +3,5 @@ uvicorn
 sqlalchemy
 anthropic
 requests
+httpx
+python-multipart
