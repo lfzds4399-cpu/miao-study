@@ -9,5 +9,8 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
-      - ./study.db:/app/study.db
+      - app_data:/app/data_vol
     restart: always
+
+volumes:
+  app_data:

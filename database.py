@@ -3,7 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-_db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "study.db")
+# Docker uses /app/data_vol, local uses project dir
+_data_dir = "/app/data_vol" if os.path.isdir("/app/data_vol") else os.path.dirname(os.path.abspath(__file__))
+_db_path = os.path.join(_data_dir, "study.db")
 DATABASE_URL = f"sqlite:///{_db_path}"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
