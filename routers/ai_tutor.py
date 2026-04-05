@@ -10,6 +10,7 @@ import models
 import anthropic
 import json
 
+from sqlalchemy import Integer
 from config import anthropic_key, SUBJECTS
 
 router = APIRouter(prefix="/api/ai", tags=["AI助手"])
@@ -280,3 +281,42 @@ def delete_chat(chat_id: int, db: Session = Depends(get_db)):
         db.delete(record)
         db.commit()
     return {"ok": True}
+
+
+@router.get("/profile")
+def get_student_profile(db: Session = Depends(get_db)):
+    """获取学生学习画像，用于AI上下文"""
+    from sqlalchemy import func as sqlfunc
+
+    # 各科错题统计
+    wrong_stats = db.query(
+        models.WrongQuestion.subject,
+        sqlfunc.count(models.WrongQuestion.id).label("total"),
+        sqlfunc.sum(sqlfunc.cast(models.WrongQuestion.mastered == False, Integer)).label("unmastered"),
+    ).group_by(models.WrongQuestion.subject).all()
+
+    # 各科学习时长
+    study_stats = db.query(
+        models.StudySession.subject,
+        sqlfunc.sum(models.StudySession.duration_min).label("total_min"),
+    ).group_by(models.StudySession.subject).all()
+
+    # 笔记数
+    note_count = db.query(sqlfunc.count(models.Note.id)).scalar() or 0
+
+    # 最近的错题（薄弱点）
+    recent_wrong = db.query(models.WrongQuestion).filter(
+        models.WrongQuestion.mastered == False
+    ).order_by(models.WrongQuestion.created_at.desc()).limit(5).all()
+
+    weak_points = []
+    for w in recent_wrong:
+        weak_points.append(f"{w.subject}-{w.chapter}: {w.question_text[:40] if w.question_text else '图片题'}")
+
+    profile = {
+        "wrong_by_subject": {s: {"total": t, "unmastered": u or 0} for s, t, u in wrong_stats},
+        "study_by_subject": {s: m or 0 for s, m in study_stats},
+        "note_count": note_count,
+        "weak_points": weak_points,
+    }
+    return profile

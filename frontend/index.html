@@ -941,6 +941,8 @@ body {
         <div class="chat-container" id="chatContainer">
           <div class="chat-drop-overlay" id="chatDropOverlay"><i data-lucide="image-plus" style="width:48px;height:48px;color:var(--accent)"></i><br>松手上传图片</div>
           <div class="chat-subject-bar" id="subjectBar"></div>
+          <!-- 历史对话列表 -->
+          <div id="chatHistoryBar" style="display:flex;gap:6px;padding:4px 0 8px;overflow-x:auto;flex-shrink:0"></div>
           <div class="chat-messages" id="chatMessages">
             <div class="empty-state">
               <div class="empty-icon"><i data-lucide="bot" style="width:48px;height:48px"></i></div>
@@ -1438,6 +1440,7 @@ function switchPage(name) {
   if (name === 'mistakes') renderMistakeTabs();
   if (name === 'graph') setTimeout(initDesmos, 100);
   if (name === 'board') loadBoard();
+  if (name === 'ai') onChatPageOpen();
 }
 
 // ── AI Chat ──
@@ -1660,6 +1663,69 @@ function clearChat() {
       <div class="empty-text">选择科目，向栀老师提问吧~<br>支持文字、语音输入和拍照解题</div>
     </div>`;
   lucide.createIcons();
+  loadChatHistory();
+}
+
+// ── Chat History (记忆功能) ──
+async function loadChatHistory() {
+  try {
+    const resp = await fetch('/api/ai/history');
+    const history = await resp.json();
+    const bar = document.getElementById('chatHistoryBar');
+    if (!bar) return;
+    if (history.length === 0) {
+      bar.innerHTML = '';
+      return;
+    }
+    bar.innerHTML = history.slice(0, 10).map(h => {
+      const active = h.id === currentChatId ? 'background:var(--accent);color:#fff;' : 'background:var(--bg2);color:var(--text2);';
+      const title = h.title.length > 12 ? h.title.slice(0, 12) + '...' : h.title;
+      return `<div style="padding:4px 10px;border-radius:8px;font-size:11px;white-space:nowrap;cursor:pointer;flex-shrink:0;${active}border:1px solid var(--border)" onclick="restoreChat(${h.id})" title="${h.title}">${title}</div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function restoreChat(chatId) {
+  try {
+    const resp = await fetch(`/api/ai/history/${chatId}`);
+    const data = await resp.json();
+    chatMessages = [];
+    currentChatId = chatId;
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = '';
+
+    // 切换到对应科目
+    if (data.subject && data.subject !== 'general') {
+      currentSubject = data.subject;
+      document.querySelectorAll('#subjectBar .resource-tab').forEach(t => {
+        t.classList.toggle('active', t.textContent.trim().includes(data.subject));
+      });
+    }
+
+    // 恢复消息
+    (data.messages || []).forEach(m => {
+      chatMessages.push({role: m.role, content: m.content});
+      addMessageToUI(m.role, typeof m.content === 'string' ? m.content : '[图片+文字]');
+    });
+
+    container.scrollTop = container.scrollHeight;
+    loadChatHistory();
+  } catch(e) {
+    console.error('恢复对话失败:', e);
+  }
+}
+
+// 进入聊天页面时自动加载历史列表
+function onChatPageOpen() {
+  loadChatHistory();
+  // 如果没有当前对话且有历史，自动加载最近的一条
+  if (!currentChatId && chatMessages.length === 0) {
+    fetch('/api/ai/history').then(r => r.json()).then(history => {
+      if (history.length > 0) {
+        restoreChat(history[0].id);
+      }
+    }).catch(() => {});
+  }
 }
 
 // ── Notes ──
@@ -2225,9 +2291,9 @@ let vcAnalyser = null;      // 音量分析器
 let vcSilenceTimer = null;  // 静音检测计时
 let vcSilenceStart = 0;     // 静音开始时间
 let vcHasVoice = false;     // 是否检测到过人声
-const VC_SILENCE_THRESHOLD = 15;   // 音量阈值（0-255）
-const VC_SILENCE_DURATION = 1800;  // 静音多久后自动发送（ms）
-const VC_MIN_RECORD_TIME = 800;    // 最短录音时间（ms）
+const VC_SILENCE_THRESHOLD = 25;   // 音量阈值（0-255），高一点过滤环境噪音
+const VC_SILENCE_DURATION = 2000;  // 静音多久后自动发送（ms），长一点避免误判
+const VC_MIN_RECORD_TIME = 1000;   // 最短录音时间（ms）
 
 function startVoiceCall() {
   vcActive = true;
