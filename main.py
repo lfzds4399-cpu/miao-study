@@ -8,7 +8,7 @@ import requests
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="四面体学习平台", version="1.0.0")
+app = FastAPI(title="栀言书院", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,12 +18,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from routers import ai_tutor, notes, wrong_questions, progress, resources
+from routers import ai_tutor, notes, wrong_questions, progress, resources, messages
 app.include_router(ai_tutor.router)
 app.include_router(notes.router)
 app.include_router(wrong_questions.router)
 app.include_router(progress.router)
 app.include_router(resources.router)
+app.include_router(messages.router)
 
 BASE_DIR = os.path.dirname(__file__)
 FRONTEND = os.path.join(BASE_DIR, "frontend")

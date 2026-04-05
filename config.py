@@ -132,43 +132,75 @@ SUBJECTS = {
     },
 }
 
-# ── 名师视频资源（B站真实链接） ──
+# ── 名师视频资源（B站真实链接 · 指定UP主+官方平台） ──
 VIDEO_RESOURCES = {
+    "语文": [
+        # 戴建业
+        {"chapter": "古代诗歌阅读", "title": "【戴建业】14个字包含8层含义？杜甫的《登高》真的这么牛？", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Fo4y1m7Da/", "teacher": "戴建业", "rating": 4.9},
+        {"chapter": "古代诗歌阅读", "title": "【戴建业】《登高》的对仗，汉语形式美运用到出神入化", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1eb4y1f7e6/", "teacher": "戴建业", "rating": 4.9},
+        {"chapter": "古代诗歌阅读", "title": "【戴建业】从陶渊明看中国人的生死观", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV15Y4y1S72B/", "teacher": "戴建业", "rating": 4.8},
+        {"chapter": "古代诗歌阅读", "title": "【戴建业】李白精神的绝对自由·《梦游天姥吟留别》", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1QW4y1W75L/", "teacher": "戴建业", "rating": 4.9},
+    ],
     "数学": [
-        {"chapter": "导数及其应用", "title": "「导数」一课通！1h零基础上手", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1iZ421y71z/", "teacher": "一数", "rating": 4.9},
-        {"chapter": "导数及其应用", "title": "从零开始1.3小时掌握导数全部知识点", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Ff4y1d7i7/", "teacher": "数学名师", "rating": 4.8},
-        {"chapter": "圆锥曲线", "title": "【圆锥曲线大题】入门到入土，所有题型全面梳理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1GgZUYCEHu/", "teacher": "zzk与数", "rating": 4.9},
-        {"chapter": "圆锥曲线", "title": "圆锥曲线椭圆篇·焦点三角形内切圆常考结论", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1US4FzAEeD/", "teacher": "赵礼显老师", "rating": 4.8},
-    ],
-    "物理": [
-        {"chapter": "电场", "title": "电场强度知识总结｜坤哥物理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1c841197Bd/", "teacher": "坤哥物理", "rating": 4.9},
-        {"chapter": "电场", "title": "静电感应现象与静电平衡｜坤哥物理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV188411Q7xY/", "teacher": "坤哥物理", "rating": 4.8},
-        {"chapter": "磁场", "title": "磁感应强度 高中物理选修3-1《磁场》", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1y741157e4/", "teacher": "物理名师", "rating": 4.8},
-        {"chapter": "磁场", "title": "安培力作用下的平衡·运动问题：从入门到精通", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV14M411k7Lf/", "teacher": "物理名师", "rating": 4.7},
-        {"chapter": "电磁感应", "title": "电磁感应现象+磁通量｜高二物理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV16KsnzKE4F/", "teacher": "物理名师", "rating": 4.8},
-        {"chapter": "电磁感应", "title": "高中物理《电磁感应专题》最全考点串讲", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1fW4y137SY/", "teacher": "物理名师", "rating": 4.9},
-    ],
-    "化学": [
-        {"chapter": "化学反应原理", "title": "【化学平衡】化学平衡状态｜0基础开始学起", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1P34y1n7tS/", "teacher": "化学名师", "rating": 4.8},
-        {"chapter": "化学反应原理", "title": "【化学平衡】化学平衡常数｜0基础愉快学习", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1SF411P7Qk/", "teacher": "化学名师", "rating": 4.7},
-        {"chapter": "电化学", "title": "【核心技巧】电极反应方程式书写，4步搞定", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1AC4y127tR/", "teacher": "小球老师讲化学", "rating": 4.9},
-        {"chapter": "电化学", "title": "高中化学——选修4·电化学基础", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Bs411p7WG/", "teacher": "化学名师", "rating": 4.7},
-        {"chapter": "有机化学基础", "title": "高中化学选修5《有机化学基础》", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ct4y1y78W/", "teacher": "化学名师", "rating": 4.8},
-        {"chapter": "有机化学基础", "title": "2h速通高考有机！手把手搞定有机大题", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1em4y167eM/", "teacher": "玉龍YULONG", "rating": 4.9},
+        # 一数
+        {"chapter": "导数及其应用", "title": "【一数】高中数学基础全集！奥数保送生主讲", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1VD4y1D7UB/", "teacher": "一数", "rating": 4.9},
+        {"chapter": "导数及其应用", "title": "【一数】高中数学基础与解法全集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV147411K7xu/", "teacher": "一数", "rating": 4.9},
+        {"chapter": "圆锥曲线", "title": "【一数】圆锥曲线技巧大全！平移齐次+点乘双根+垂径定理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1UXW4zNEBS/", "teacher": "一数", "rating": 4.9},
+        {"chapter": "数列", "title": "【一数】120+拔高系统合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV14gu3zmEko/", "teacher": "一数", "rating": 4.8},
+        # 李永乐
+        {"chapter": "导数及其应用", "title": "【李永乐】高三数学复习100讲·函数", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1z441147P4/", "teacher": "李永乐", "rating": 4.9},
+        {"chapter": "空间向量与立体几何", "title": "【李永乐】高三数学复习100讲·立体几何", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1V4411e7pA/", "teacher": "李永乐", "rating": 4.8},
+        # 数学微课帮
+        {"chapter": "导数及其应用", "title": "【数学微课帮】高中数学必修合集（第一册与第二册）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV154411i7JS/", "teacher": "数学微课帮", "rating": 4.8},
+        {"chapter": "圆锥曲线", "title": "【数学微课帮】高考数学专题复习（基础篇+提高篇）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1bt411C7E8/", "teacher": "数学微课帮", "rating": 4.8},
     ],
     "英语": [
-        {"chapter": "阅读理解", "title": "【高中英语】阅读开挂！4+2刷分模式6分钟解决阅读难题", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV12G411f7XE/", "teacher": "龙坚-中高考英语", "rating": 4.8},
-        {"chapter": "阅读理解", "title": "高考英语阅读理解技巧精讲（纯干货）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ME411Y7Ec/", "teacher": "英语名师", "rating": 4.7},
+        # 英语兔
+        {"chapter": "语法填空", "title": "【英语兔】英语语法精讲合集（全面、通俗、有趣）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1XY411J7aG/", "teacher": "英语兔", "rating": 4.9},
+        {"chapter": "语法填空", "title": "【英语兔】16种时态终极详解合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Sv411y7d8/", "teacher": "英语兔", "rating": 4.9},
+        {"chapter": "语法填空", "title": "【英语兔】所有英语从句，一个合集搞定！", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1764y1f7nq/", "teacher": "英语兔", "rating": 4.9},
+        {"chapter": "阅读理解", "title": "【英语兔】一个视频说清整个英语语法体系", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1r54y1m7gd/", "teacher": "英语兔", "rating": 4.8},
+        # 赖世雄
+        {"chapter": "词汇积累", "title": "【赖世雄】48个英语音标朗读示范·美音英音对照", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1NZ4y187A5/", "teacher": "赖世雄", "rating": 4.8},
+        {"chapter": "词汇积累", "title": "【赖世雄】自然拼读法（已完结45集）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1XM411o7ZA/", "teacher": "赖世雄", "rating": 4.8},
+        {"chapter": "写作", "title": "【赖世雄】如何学英语系列", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1jp411o7oo/", "teacher": "赖世雄", "rating": 4.7},
+        # 阿滴英文
+        {"chapter": "完形填空", "title": "【阿滴英文】30句让英文更生动的实用片语", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Bh411k7VQ/", "teacher": "阿滴英文", "rating": 4.7},
+        # 学而思
+        {"chapter": "语法填空", "title": "【学而思】高三英语·从句复习·名词性从句重难点", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1K741187De/", "teacher": "学而思网校", "rating": 4.7},
+        # 新东方
+        {"chapter": "词汇积累", "title": "【新东方】高考必背单词秘籍", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1A7411p7vn/", "teacher": "新东方在线", "rating": 4.7},
     ],
-    "语文": [
-        {"chapter": "古代诗歌阅读", "title": "高中语文【诗歌鉴赏】专题详解", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1M44y1y7qB/", "teacher": "语文名师", "rating": 4.8},
-        {"chapter": "古代诗歌阅读", "title": "一个视频学会诗歌鉴赏：分析表达技巧与语言风格", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1iM4m1U7Sw/", "teacher": "语文名师", "rating": 4.7},
+    "物理": [
+        # 黄夫人
+        {"chapter": "曲线运动", "title": "【黄夫人】高中物理一轮复习·平抛运动（已完结）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1b54y1r7LD/", "teacher": "黄夫人", "rating": 4.9},
+        {"chapter": "电场", "title": "【黄夫人】高中物理电学篇（新教材版）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ob411p7xr/", "teacher": "黄夫人", "rating": 4.9},
+        {"chapter": "电磁感应", "title": "【黄夫人】巧记物理公式合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1uh411J7ia/", "teacher": "黄夫人", "rating": 4.8},
+        {"chapter": "电磁感应", "title": "【黄夫人】电容器运动学解题模板", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1vZ4y1x74H/", "teacher": "黄夫人", "rating": 4.8},
+        # 跳跳学长
+        {"chapter": "交变电流", "title": "【跳跳学长】选修系统课合集（动量+振动+波+电磁感应+交变电流）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1qm4y1i7zf/", "teacher": "跳跳学长", "rating": 4.9},
+        {"chapter": "电场", "title": "【跳跳学长】必修3系统课·库仑力平衡问题", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1VF411773F/", "teacher": "跳跳学长", "rating": 4.8},
+        {"chapter": "恒定电流", "title": "【跳跳学长】必修3系统课·电流微观表达式", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1LN4y1M7Gg/", "teacher": "跳跳学长", "rating": 4.8},
+        {"chapter": "恒定电流", "title": "【跳跳学长】必修3系统课·电源与电动势", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1CW4y117Rf/", "teacher": "跳跳学长", "rating": 4.8},
+        # 北京数字学校
+        {"chapter": "交变电流", "title": "【北京数字学校】高中物理选修3-2·传感器", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV177411s7tm/", "teacher": "北京数字学校", "rating": 4.7},
+        {"chapter": "电场", "title": "【北京数字学校】高二物理第一学期合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yt4y1S7qw/", "teacher": "北京数字学校", "rating": 4.7},
+    ],
+    "化学": [
+        # 真·凤舞九天
+        {"chapter": "化学反应原理", "title": "【真·凤舞九天】疯狂化学系列回顾", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Cx411i7em/", "teacher": "真·凤舞九天", "rating": 4.9},
+        {"chapter": "元素周期律", "title": "【真·凤舞九天】疯狂化学2：元素奇迹", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Xs411f7a6/", "teacher": "真·凤舞九天", "rating": 4.9},
+        {"chapter": "电化学", "title": "【真·凤舞九天】如何打造爆款锂电池", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yJ411a7kG/", "teacher": "真·凤舞九天", "rating": 4.8},
+        {"chapter": "有机化学基础", "title": "【真·凤舞九天】疯狂化学1.5", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1dx411i7QW/", "teacher": "真·凤舞九天", "rating": 4.8},
+        # 毕啸天/毕导
+        {"chapter": "化学反应原理", "title": "【毕导】诺贝尔化学奖为何总颁给生物？", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ti4y177SH/", "teacher": "毕啸天", "rating": 4.8},
+        {"chapter": "元素周期律", "title": "【毕导】谁才是世界上最懒惰的惰性气体？", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Q197YCEpi/", "teacher": "毕啸天", "rating": 4.8},
+        {"chapter": "化学反应原理", "title": "【毕导】在这个简单问题上，你学的教材可能一直是错的", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ZJ9CY4EzR/", "teacher": "毕啸天", "rating": 4.7},
+        # 高途课堂
+        {"chapter": "离子反应", "title": "【高途课堂】高一化学·离子反应（上）·吕子正", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV18U4y1n7tb/", "teacher": "高途课堂", "rating": 4.8},
+        {"chapter": "氧化还原反应", "title": "【高途课堂】高一化学·离子反应+氧化还原反应·吕子正", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1AL411n7U3/", "teacher": "高途课堂", "rating": 4.8},
+        {"chapter": "氧化还原反应", "title": "【高途课堂】高一化学·氧还性比较+配平·吕子正", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV18M4y1N7zy/", "teacher": "高途课堂", "rating": 4.7},
     ],
     "生物": [],
-    "地理": [
-        {"chapter": "自然地理", "title": "【高中地理】10分钟搞定气压带和风带的形成及移动", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Ji4y1L7r3/", "teacher": "老吕高中地理", "rating": 4.9},
-        {"chapter": "自然地理", "title": "气压带与风带之三圈环流·分布和季节移动", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1if4y1m7B4/", "teacher": "小郑老师", "rating": 4.8},
-        {"chapter": "地表形态", "title": "高中地理必修一·常见地貌类型（喀斯特地貌）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Nv4y1R7oC/", "teacher": "地理名师", "rating": 4.7},
-        {"chapter": "地表形态", "title": "高中地理：雅丹地貌与风积地貌", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1wt4y1B7r9/", "teacher": "地理名师", "rating": 4.7},
-    ],
+    "地理": [],
 }

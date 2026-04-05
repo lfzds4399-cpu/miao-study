@@ -3,50 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>喵学堂 · 衡阳一中</title>
+<title>栀言书院 · 衡阳一中</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 :root {
-  --bg: #faf5ff;
+  --bg: #fdf6ff;
   --bg2: #fff;
-  --bg3: #f3e8ff;
-  --border: rgba(168,85,247,.12);
+  --bg3: #f8f0fe;
+  --border: rgba(180,120,220,.12);
   --text: #3b1764;
-  --text2: rgba(107,58,168,.6);
-  --text3: rgba(107,58,168,.35);
-  --accent: #a855f7;
-  --accent2: #c084fc;
+  --text2: rgba(107,58,168,.55);
+  --text3: rgba(107,58,168,.3);
+  --accent: #b06ce0;
+  --accent2: #d4a0f5;
   --green: #34d399;
   --red: #f472b6;
   --orange: #fbbf24;
   --cyan: #67e8f9;
   --pink: #f9a8d4;
+  --sakura: #fce4ec;
+  --lavender: #ede7f6;
   --sidebar-w: 260px;
+  --shadow-sm: 0 2px 8px rgba(176,108,224,.06);
+  --shadow-md: 0 4px 20px rgba(176,108,224,.08);
+  --shadow-lg: 0 8px 32px rgba(176,108,224,.12);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; overflow:hidden; }
 body {
   font-family: 'Noto Sans SC','Inter',sans-serif;
   background: var(--bg); color: var(--text);
-  background-image: radial-gradient(ellipse at 20% 50%, rgba(168,85,247,.05) 0%, transparent 60%),
-                    radial-gradient(ellipse at 80% 20%, rgba(249,168,212,.06) 0%, transparent 50%);
+  background-image:
+    radial-gradient(ellipse at 15% 50%, rgba(252,228,236,.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 20%, rgba(237,231,246,.5) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(248,240,254,.3) 0%, transparent 40%);
 }
 ::-webkit-scrollbar { width:5px; }
-::-webkit-scrollbar-thumb { background:rgba(168,85,247,.2); border-radius:3px; }
+::-webkit-scrollbar-thumb { background:rgba(176,108,224,.18); border-radius:3px; }
 ::-webkit-scrollbar-track { background:transparent; }
-::selection { background:rgba(168,85,247,.15); color:var(--text); }
+::selection { background:rgba(176,108,224,.15); color:var(--text); }
 
-/* ── 布局 ── */
+/* -- Animations -- */
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideInLeft { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:translateX(0)} }
+@keyframes slideInRight { from{opacity:0;transform:translateX(12px)} to{opacity:1;transform:translateX(0)} }
+@keyframes scaleIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.6} }
+@keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)} }
+@keyframes shimmer { 0%{background-position:-200px 0} 100%{background-position:calc(200px + 100%) 0} }
+@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+.fade-in { animation: fadeIn .35s ease-out both; }
+.slide-in-l { animation: slideInLeft .3s ease-out both; }
+.slide-in-r { animation: slideInRight .3s ease-out both; }
+.scale-in { animation: scaleIn .25s ease-out both; }
+
+/* -- Layout -- */
 .app { display:flex; height:100vh; }
 
-/* ── 侧边栏 ── */
+/* -- Sidebar -- */
 .sidebar {
   width: var(--sidebar-w); min-width: var(--sidebar-w);
-  background: linear-gradient(180deg, #fdf2f8 0%, #faf5ff 50%, #f0f9ff 100%);
+  background: linear-gradient(180deg, #fce4ec 0%, #f3e5f5 40%, #ede7f6 100%);
   border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
   overflow: hidden;
@@ -57,95 +79,111 @@ body {
 }
 .logo { display:flex; align-items:center; gap:10px; }
 .logo-icon {
-  width:36px; height:36px; border-radius:10px;
-  background: linear-gradient(135deg, #e879f9, #f9a8d4);
+  width:38px; height:38px; border-radius:12px;
+  background: linear-gradient(135deg, #e1bee7, #f8bbd0);
   display:flex; align-items:center; justify-content:center;
-  font-size:18px;
-  box-shadow: 0 0 20px rgba(232,121,249,.25);
+  box-shadow: 0 2px 12px rgba(225,190,231,.4);
+  transition: transform .3s, box-shadow .3s;
 }
+.logo-icon:hover { transform:rotate(-8deg) scale(1.1); box-shadow: 0 4px 20px rgba(225,190,231,.6); }
+.logo-icon svg { width:20px; height:20px; color:#6a1b9a; }
 .logo-text { font-weight:700; font-size:15px; }
 .logo-school { font-size:11px; color:var(--text3); margin-top:2px; }
 
-/* 天气卡片 */
+/* Weather card */
 .weather-card {
   margin: 12px 16px 0;
   padding: 12px 14px;
-  background: linear-gradient(135deg, rgba(232,121,249,.1), rgba(249,168,212,.1));
-  border: 1px solid rgba(232,121,249,.15);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(248,187,209,.15), rgba(225,190,231,.15));
+  border: 1px solid rgba(225,190,231,.2);
+  border-radius: 14px;
   font-size: 12px;
+  transition: transform .2s;
 }
+.weather-card:hover { transform:translateY(-1px); }
 .weather-top { display:flex; justify-content:space-between; align-items:center; }
 .weather-temp { font-size:28px; font-weight:700; }
 .weather-desc { color:var(--text2); }
 .weather-tips { margin-top:8px; }
 .weather-tip {
-  padding: 4px 8px; border-radius:6px; font-size:11px;
-  background: rgba(255,255,255,.05); margin-top:4px;
+  padding: 4px 8px; border-radius:8px; font-size:11px;
+  background: rgba(255,255,255,.5); margin-top:4px;
   color: var(--orange);
+  display:flex; align-items:center; gap:4px;
 }
 
-/* 高考倒计时 */
+/* Countdown */
 .countdown-card {
   margin: 12px 16px 0;
   padding: 10px 14px;
-  background: linear-gradient(135deg, rgba(244,114,182,.1), rgba(251,191,36,.08));
-  border: 1px solid rgba(244,114,182,.12);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(248,187,209,.12), rgba(255,224,178,.1));
+  border: 1px solid rgba(248,187,209,.15);
+  border-radius: 14px;
   text-align: center;
+  transition: transform .2s;
 }
+.countdown-card:hover { transform:translateY(-1px); }
 .countdown-label { font-size:11px; color:var(--text3); }
 .countdown-days {
   font-size:32px; font-weight:800;
-  background: linear-gradient(135deg, #e879f9, #f472b6);
+  background: linear-gradient(135deg, #ce93d8, #f48fb1);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-size:200% auto; animation: gradientShift 3s ease infinite;
 }
 .countdown-unit { font-size:12px; color:var(--text2); }
 
-/* 导航 */
+/* Nav */
 .nav-section { padding: 16px 10px; flex:1; overflow-y:auto; }
-.nav-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; padding:0 8px; margin-bottom:6px; }
+.nav-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:1px; padding:0 8px; margin-bottom:6px; font-weight:600; }
 .nav-item {
   display:flex; align-items:center; gap:10px;
-  padding: 10px 12px; border-radius:10px;
-  cursor:pointer; transition:all .15s;
+  padding: 10px 12px; border-radius:12px;
+  cursor:pointer; transition:all .2s ease;
   font-size:13px; color:var(--text2);
-  margin-bottom:2px;
+  margin-bottom:2px; position:relative;
 }
-.nav-item:hover { background:rgba(255,255,255,.04); color:var(--text); }
-.nav-item.active { background:rgba(168,85,247,.1); color:var(--accent); font-weight:600; }
-.nav-item .icon { font-size:16px; width:20px; text-align:center; }
+.nav-item:hover { background:rgba(176,108,224,.06); color:var(--text); transform:translateX(2px); }
+.nav-item.active {
+  background:rgba(176,108,224,.1); color:var(--accent);
+  font-weight:600; box-shadow: inset 3px 0 0 var(--accent);
+}
+.nav-item .icon { width:20px; height:20px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.nav-item .icon svg { width:16px; height:16px; }
 .nav-item .badge {
-  margin-left:auto; background:#f472b6; color:#fff;
-  font-size:10px; padding:2px 6px; border-radius:8px; font-weight:600;
+  margin-left:auto; background:linear-gradient(135deg, #f48fb1, #ce93d8); color:#fff;
+  font-size:10px; padding:2px 7px; border-radius:10px; font-weight:600;
 }
 
-/* ── 主区域 ── */
+/* -- Main area -- */
 .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
 .main-header {
   padding: 16px 24px;
   border-bottom: 1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between;
-  background: rgba(255,255,255,.7);
-  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,.75);
+  backdrop-filter: blur(12px);
 }
-.main-title { font-size:18px; font-weight:700; }
+.main-title { font-size:18px; font-weight:700; display:flex; align-items:center; gap:8px; }
+.main-title svg { width:20px; height:20px; color:var(--accent); }
 .main-content { flex:1; overflow-y:auto; padding:24px; }
 
-/* ── 仪表盘 ── */
+/* -- Dashboard -- */
 .dashboard-grid {
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap:16px; margin-bottom:24px;
 }
 .stat-card {
-  background: rgba(255,255,255,.8);
+  background: rgba(255,255,255,.85);
   border: 1px solid var(--border);
-  border-radius:14px;
+  border-radius:16px;
   padding:20px;
-  box-shadow: 0 2px 12px rgba(168,85,247,.06);
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s, box-shadow .2s;
 }
-.stat-label { font-size:12px; color:var(--text3); margin-bottom:4px; }
+.stat-card:hover { transform:translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-label { font-size:12px; color:var(--text3); margin-bottom:4px; display:flex; align-items:center; gap:4px; }
+.stat-label svg { width:14px; height:14px; }
 .stat-value { font-size:28px; font-weight:700; }
 .stat-sub { font-size:11px; color:var(--text3); margin-top:4px; }
 
@@ -154,51 +192,81 @@ body {
   gap:12px; margin-bottom:24px;
 }
 .quick-btn {
-  padding:16px; border-radius:12px;
-  background: rgba(255,255,255,.8); border:1px solid var(--border);
-  cursor:pointer; transition:all .2s;
+  padding:16px; border-radius:14px;
+  background: rgba(255,255,255,.85); border:1px solid var(--border);
+  cursor:pointer; transition:all .25s ease;
   display:flex; align-items:center; gap:12px;
-  box-shadow: 0 2px 8px rgba(168,85,247,.04);
+  box-shadow: var(--shadow-sm);
 }
-.quick-btn:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow: 0 4px 16px rgba(168,85,247,.1); }
-.quick-btn .qicon { font-size:24px; }
+.quick-btn:hover {
+  border-color:var(--accent2); transform:translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.quick-btn .qicon {
+  width:42px; height:42px; border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.quick-btn .qicon svg { width:20px; height:20px; }
 .quick-btn .qlabel { font-size:13px; font-weight:600; }
-.quick-btn .qdesc { font-size:11px; color:var(--text3); }
+.quick-btn .qdesc { font-size:11px; color:var(--text3); margin-top:2px; }
 
-/* ── AI聊天 ── */
+/* Daily card */
+.daily-card {
+  background: linear-gradient(135deg, rgba(252,228,236,.5), rgba(237,231,246,.5));
+  border: 1px solid rgba(225,190,231,.2);
+  border-radius:16px; padding:20px;
+  margin-bottom:24px; display:flex; gap:20px; align-items:center;
+  box-shadow: var(--shadow-sm);
+  transition: transform .2s;
+  min-height:120px;
+}
+.daily-card:hover { transform:translateY(-2px); }
+.daily-quote { flex:1; }
+.daily-quote-text { font-size:15px; line-height:1.8; color:var(--text); font-style:italic; }
+.daily-quote-label { font-size:11px; color:var(--text3); margin-top:8px; display:flex; align-items:center; gap:4px; }
+.daily-cat { width:100px; height:100px; border-radius:14px; object-fit:cover; border:2px solid rgba(225,190,231,.3); flex-shrink:0; }
+
+/* Section title */
+.section-title { font-size:15px; font-weight:600; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.section-title svg { width:16px; height:16px; color:var(--accent); }
+
+/* -- AI Chat -- */
 .chat-container { display:flex; flex-direction:column; height:100%; }
 .chat-subject-bar {
   display:flex; gap:6px; padding:0 0 16px; flex-wrap:wrap;
 }
 .subject-chip {
-  padding:6px 14px; border-radius:8px; font-size:12px;
+  padding:6px 14px; border-radius:10px; font-size:12px;
   background:var(--bg3); border:1px solid var(--border);
-  cursor:pointer; transition:all .15s; color:var(--text2);
+  cursor:pointer; transition:all .2s; color:var(--text2);
+  display:flex; align-items:center; gap:4px;
 }
-.subject-chip.active { border-color:var(--accent); color:var(--accent); background:rgba(168,85,247,.08); }
+.subject-chip:hover { border-color:var(--accent2); }
+.subject-chip.active { border-color:var(--accent); color:var(--accent); background:rgba(176,108,224,.08); font-weight:600; }
 .chat-messages {
   flex:1; overflow-y:auto; padding-bottom:16px;
   display:flex; flex-direction:column; gap:16px;
 }
 .msg {
   max-width:85%; padding:14px 18px;
-  border-radius:16px; font-size:14px; line-height:1.7;
-  word-break:break-word;
+  border-radius:18px; font-size:14px; line-height:1.7;
+  word-break:break-word; animation: fadeIn .3s ease-out;
 }
 .msg.user {
   align-self:flex-end;
-  background:linear-gradient(135deg, #c084fc, #e879f9);
+  background:linear-gradient(135deg, #ce93d8, #f48fb1);
   color:#fff;
   border-bottom-right-radius:4px;
 }
 .msg.assistant {
   align-self:flex-start;
-  background:rgba(255,255,255,.9); border:1px solid var(--border);
+  background:rgba(255,255,255,.92); border:1px solid var(--border);
   border-bottom-left-radius:4px;
-  box-shadow: 0 2px 8px rgba(168,85,247,.06);
+  box-shadow: var(--shadow-sm);
 }
 .msg.assistant .katex { font-size:0.95em; }
-.msg img { max-width:200px; border-radius:8px; margin:8px 0; }
+.msg img { max-width:200px; border-radius:10px; margin:8px 0; }
 
 .chat-input-area {
   padding:16px 0 0;
@@ -210,34 +278,36 @@ body {
 .chat-input {
   flex:1; padding:12px 16px;
   background:var(--bg3); border:1px solid var(--border);
-  border-radius:12px; color:var(--text); font-size:14px;
+  border-radius:14px; color:var(--text); font-size:14px;
   outline:none; resize:none; min-height:44px; max-height:120px;
-  font-family:inherit;
+  font-family:inherit; transition: border-color .2s;
 }
-.chat-input:focus { border-color:var(--accent); }
+.chat-input:focus { border-color:var(--accent); box-shadow: 0 0 0 3px rgba(176,108,224,.08); }
 .chat-input::placeholder { color:var(--text3); }
 .chat-btn {
   width:44px; height:44px; border-radius:12px;
   border:none; cursor:pointer; display:flex;
   align-items:center; justify-content:center;
-  font-size:18px; transition:all .15s; flex-shrink:0;
+  transition:all .2s; flex-shrink:0;
 }
+.chat-btn svg { width:18px; height:18px; }
 .chat-btn.send {
-  background:linear-gradient(135deg, #c084fc, #e879f9);
+  background:linear-gradient(135deg, #ce93d8, #f48fb1);
   color:#fff;
 }
-.chat-btn.send:hover { transform:scale(1.05); }
+.chat-btn.send:hover { transform:scale(1.06); box-shadow: 0 4px 12px rgba(206,147,216,.3); }
 .chat-btn.upload { background:var(--bg3); border:1px solid var(--border); color:var(--text2); }
-.chat-btn.upload:hover { border-color:var(--accent); color:var(--accent2); }
+.chat-btn.upload:hover { border-color:var(--accent); color:var(--accent); }
+.chat-btn.camera { background:var(--bg3); border:1px solid var(--border); color:var(--text2); }
+.chat-btn.camera:hover { border-color:var(--accent); color:var(--accent); }
 .chat-btn.voice { background:var(--bg3); border:1px solid var(--border); color:var(--text2); }
 .chat-btn.voice.recording { background:var(--red); color:#fff; border-color:var(--red); animation:pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;}50%{opacity:.7;} }
 
 .image-preview {
   margin-bottom:8px; position:relative; display:inline-block;
 }
 .image-preview img {
-  max-height:80px; border-radius:8px; border:1px solid var(--border);
+  max-height:80px; border-radius:10px; border:1px solid var(--border);
 }
 .image-preview .remove {
   position:absolute; top:-6px; right:-6px;
@@ -247,19 +317,82 @@ body {
   align-items:center; justify-content:center;
 }
 
-/* ── 笔记 ── */
+/* Drop overlay */
+.chat-drop-overlay {
+  display:none; position:absolute; inset:0; z-index:10;
+  background:rgba(176,108,224,.08); border:3px dashed var(--accent);
+  border-radius:16px; backdrop-filter:blur(2px);
+  flex-direction:column; align-items:center; justify-content:center;
+  font-size:16px; font-weight:600; color:var(--accent); gap:8px;
+}
+.chat-drop-overlay.active { display:flex; }
+.chat-container { position:relative; }
+
+/* Camera modal */
+.camera-modal {
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,.7); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+}
+.camera-modal.active { display:flex; }
+.camera-box {
+  background:var(--bg2); border-radius:20px; padding:20px;
+  max-width:500px; width:90%; animation: scaleIn .3s ease-out;
+}
+.camera-box video { width:100%; border-radius:12px; background:#000; }
+.camera-box canvas { display:none; }
+.camera-controls { display:flex; justify-content:center; gap:16px; margin-top:16px; }
+.camera-controls button {
+  padding:12px 24px; border-radius:12px; border:none;
+  font-size:14px; font-weight:600; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; gap:6px;
+}
+.camera-controls button svg { width:18px; height:18px; }
+.camera-controls .capture-btn { background:linear-gradient(135deg, #ce93d8, #f48fb1); color:#fff; }
+.camera-controls .capture-btn:hover { transform:scale(1.05); }
+.camera-controls .cancel-btn { background:var(--bg3); color:var(--text2); border:1px solid var(--border); }
+
+/* Video embed modal */
+.video-modal {
+  display:none; position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center;
+}
+.video-modal.active { display:flex; }
+.video-modal-box {
+  background:var(--bg2); border-radius:20px; padding:16px;
+  width:90%; max-width:800px; animation: scaleIn .3s ease-out;
+}
+.video-modal-box .vm-header {
+  display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;
+}
+.video-modal-box .vm-title { font-size:14px; font-weight:600; }
+.video-modal-box .vm-close {
+  width:32px; height:32px; border-radius:8px; border:1px solid var(--border);
+  background:var(--bg3); cursor:pointer; display:flex;
+  align-items:center; justify-content:center; transition:all .2s;
+}
+.video-modal-box .vm-close:hover { border-color:var(--red); color:var(--red); }
+.video-modal-box .vm-close svg { width:16px; height:16px; }
+.video-modal-box iframe {
+  width:100%; aspect-ratio:16/9; border:none; border-radius:12px;
+}
+
+/* -- Notes -- */
 .notes-layout { display:flex; gap:16px; height:100%; }
 .notes-list {
   width:280px; overflow-y:auto;
   border-right:1px solid var(--border); padding-right:16px;
 }
 .note-card {
-  padding:12px; border-radius:10px;
-  background:rgba(255,255,255,.8); border:1px solid var(--border);
-  margin-bottom:8px; cursor:pointer; transition:all .15s;
+  padding:12px; border-radius:12px;
+  background:rgba(255,255,255,.85); border:1px solid var(--border);
+  margin-bottom:8px; cursor:pointer; transition:all .2s;
+  box-shadow: var(--shadow-sm);
 }
-.note-card:hover, .note-card.active { border-color:var(--accent); }
-.note-card .nc-subject { font-size:10px; color:var(--accent2); text-transform:uppercase; }
+.note-card:hover { border-color:var(--accent2); transform:translateX(2px); }
+.note-card.active { border-color:var(--accent); box-shadow: var(--shadow-md); }
+.note-card .nc-subject { font-size:10px; color:var(--accent2); text-transform:uppercase; font-weight:600; }
 .note-card .nc-title { font-size:13px; font-weight:600; margin:4px 0; }
 .note-card .nc-date { font-size:10px; color:var(--text3); }
 .notes-editor { flex:1; display:flex; flex-direction:column; }
@@ -273,79 +406,88 @@ body {
 }
 .note-meta select {
   background:var(--bg3); border:1px solid var(--border);
-  color:var(--text2); padding:4px 8px; border-radius:6px; font-size:11px;
+  color:var(--text2); padding:4px 8px; border-radius:8px; font-size:11px;
 }
 .note-editor-area {
   flex:1; padding:14px; background:var(--bg3);
-  border:1px solid var(--border); border-radius:12px;
+  border:1px solid var(--border); border-radius:14px;
   color:var(--text); font-size:14px; line-height:1.8;
   outline:none; resize:none; font-family:inherit;
-  overflow-y:auto;
+  overflow-y:auto; transition: border-color .2s;
 }
+.note-editor-area:focus { border-color:var(--accent); }
 
-/* ── 错题本 ── */
+/* -- Wrong questions -- */
 .wrong-grid {
   display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr));
   gap:12px;
 }
 .wrong-card {
-  background:rgba(255,255,255,.8); border:1px solid var(--border);
-  border-radius:12px; padding:16px; cursor:pointer;
-  transition:all .15s;
-  box-shadow: 0 2px 8px rgba(168,85,247,.04);
+  background:rgba(255,255,255,.85); border:1px solid var(--border);
+  border-radius:14px; padding:16px; cursor:pointer;
+  transition:all .2s; box-shadow: var(--shadow-sm);
 }
-.wrong-card:hover { border-color:var(--accent); }
+.wrong-card:hover { border-color:var(--accent2); transform:translateY(-2px); box-shadow:var(--shadow-md); }
 .wrong-card.mastered { opacity:.5; }
 .wrong-header { display:flex; justify-content:space-between; margin-bottom:8px; }
-.wrong-subject { font-size:11px; padding:2px 8px; border-radius:6px; }
+.wrong-subject { font-size:11px; padding:3px 10px; border-radius:8px; font-weight:500; }
 .wrong-diff { font-size:11px; color:var(--orange); }
 .wrong-question { font-size:13px; line-height:1.6; margin-bottom:8px; }
 .wrong-footer { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text3); }
 
-/* ── 资源 ── */
+/* -- Resources -- */
 .resource-tabs { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
 .resource-tab {
-  padding:8px 16px; border-radius:8px; font-size:13px;
+  padding:8px 16px; border-radius:10px; font-size:13px;
   background:var(--bg3); border:1px solid var(--border);
-  cursor:pointer; transition:all .15s; color:var(--text2);
+  cursor:pointer; transition:all .2s; color:var(--text2);
+  display:flex; align-items:center; gap:4px;
 }
-.resource-tab.active { border-color:var(--accent); color:var(--accent); background:rgba(168,85,247,.08); }
+.resource-tab:hover { border-color:var(--accent2); }
+.resource-tab.active { border-color:var(--accent); color:var(--accent); background:rgba(176,108,224,.08); font-weight:600; }
 
-.chapter-section { margin-bottom:24px; }
-.chapter-title { font-size:16px; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.chapter-section { margin-bottom:24px; animation: fadeIn .3s ease-out; }
+.chapter-title {
+  font-size:16px; font-weight:700; margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+  cursor:pointer; transition: color .2s;
+}
+.chapter-title:hover { color:var(--accent); }
 .progress-bar {
   height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; margin-bottom:8px;
 }
-.progress-fill { height:100%; background:linear-gradient(90deg, #c084fc, #f9a8d4); border-radius:3px; transition:width .3s; }
+.progress-fill { height:100%; background:linear-gradient(90deg, #ce93d8, #f48fb1); border-radius:3px; transition:width .3s; }
 
 .video-card {
   display:flex; align-items:center; gap:12px;
-  padding:12px; background:rgba(255,255,255,.8); border:1px solid var(--border);
-  border-radius:10px; margin-bottom:8px; cursor:pointer;
-  transition:all .15s; text-decoration:none; color:var(--text);
-  box-shadow: 0 2px 6px rgba(168,85,247,.04);
+  padding:12px; background:rgba(255,255,255,.85); border:1px solid var(--border);
+  border-radius:12px; margin-bottom:8px; cursor:pointer;
+  transition:all .2s; text-decoration:none; color:var(--text);
+  box-shadow: var(--shadow-sm);
 }
-.video-card:hover { border-color:var(--accent); }
-.video-icon { font-size:28px; }
+.video-card:hover { border-color:var(--accent2); transform:translateX(3px); box-shadow:var(--shadow-md); }
+.video-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.video-icon svg { width:18px; height:18px; }
 .video-info { flex:1; }
 .video-title { font-size:13px; font-weight:600; }
 .video-teacher { font-size:11px; color:var(--text3); }
 .video-rating { font-size:12px; color:var(--orange); }
 
-/* ── 公式速查 ── */
+/* -- Formulas -- */
 .formula-card {
-  background:rgba(255,255,255,.8); border:1px solid var(--border);
-  border-radius:12px; padding:16px; margin-bottom:12px;
-  box-shadow: 0 2px 8px rgba(168,85,247,.04);
+  background:rgba(255,255,255,.85); border:1px solid var(--border);
+  border-radius:14px; padding:16px; margin-bottom:12px;
+  box-shadow: var(--shadow-sm); transition: transform .2s;
 }
-.formula-chapter { font-size:14px; font-weight:600; margin-bottom:10px; color:var(--accent2); }
+.formula-card:hover { transform:translateY(-1px); }
+.formula-chapter { font-size:14px; font-weight:600; margin-bottom:10px; color:var(--accent); }
 .formula-item {
   padding:6px 0; font-size:13px; line-height:1.8;
   border-bottom:1px solid var(--border);
 }
 .formula-item:last-child { border:none; }
 
-/* ── 番茄钟 ── */
+/* -- Pomodoro -- */
 .pomodoro {
   display:flex; flex-direction:column; align-items:center;
   justify-content:center; height:100%;
@@ -356,63 +498,68 @@ body {
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
   position:relative; margin-bottom:24px;
+  transition: all .4s ease;
 }
-.pomo-circle.running { border-color:var(--accent); box-shadow:0 0 40px rgba(168,85,247,.15); }
+.pomo-circle.running { border-color:var(--accent); box-shadow:0 0 40px rgba(176,108,224,.15); }
 .pomo-circle.break { border-color:var(--green); box-shadow:0 0 40px rgba(52,211,153,.15); }
 .pomo-time { font-size:56px; font-weight:800; }
 .pomo-label { font-size:13px; color:var(--text2); margin-top:4px; }
 .pomo-subject-select {
-  padding:8px 16px; border-radius:8px;
+  padding:8px 16px; border-radius:10px;
   background:var(--bg3); border:1px solid var(--border);
   color:var(--text); font-size:14px; margin-bottom:16px;
 }
 .pomo-controls { display:flex; gap:12px; }
 .pomo-btn {
-  padding:12px 32px; border-radius:10px; border:none;
+  padding:12px 32px; border-radius:12px; border:none;
   font-size:14px; font-weight:600; cursor:pointer;
-  transition:all .2s;
+  transition:all .2s; display:flex; align-items:center; gap:6px;
 }
-.pomo-btn.start { background:var(--accent); color:#fff; }
-.pomo-btn.start:hover { background:#4f46e5; }
+.pomo-btn svg { width:16px; height:16px; }
+.pomo-btn.start { background:linear-gradient(135deg, #ce93d8, #b39ddb); color:#fff; }
+.pomo-btn.start:hover { transform:translateY(-2px); box-shadow: 0 4px 16px rgba(179,157,219,.3); }
 .pomo-btn.stop { background:var(--bg3); color:var(--text); border:1px solid var(--border); }
 .pomo-btn.stop:hover { border-color:var(--red); color:var(--red); }
 
-/* ── 通用 ── */
+/* -- General -- */
 .empty-state {
   text-align:center; padding:60px 20px; color:var(--text3);
 }
-.empty-state .empty-icon { font-size:48px; margin-bottom:12px; }
-.empty-state .empty-text { font-size:14px; }
+.empty-state .empty-icon { margin-bottom:12px; }
+.empty-state .empty-icon svg { width:48px; height:48px; color:var(--accent2); }
+.empty-state .empty-text { font-size:14px; line-height:1.8; }
 .btn {
-  padding:8px 16px; border-radius:8px; border:none;
+  padding:8px 16px; border-radius:10px; border:none;
   font-size:12px; font-weight:600; cursor:pointer;
-  transition:all .15s;
+  transition:all .2s; display:inline-flex; align-items:center; gap:4px;
 }
-.btn-primary { background:var(--accent); color:#fff; }
-.btn-primary:hover { background:#4f46e5; }
+.btn svg { width:14px; height:14px; }
+.btn-primary { background:linear-gradient(135deg, #ce93d8, #b39ddb); color:#fff; }
+.btn-primary:hover { transform:translateY(-1px); box-shadow: 0 4px 12px rgba(179,157,219,.3); }
 .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text2); }
-.btn-ghost:hover { border-color:var(--accent); color:var(--accent2); }
+.btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
 
-/* ── 页面隐藏 ── */
+/* Pages */
 .page { display:none; height:100%; }
-.page.active { display:flex; flex-direction:column; }
+.page.active { display:flex; flex-direction:column; animation: fadeIn .3s ease-out; }
 
-/* ── 语音通话 ── */
+/* -- Voice call overlay -- */
 .voice-call-overlay {
   display:none; position:fixed; inset:0; z-index:999;
-  background:linear-gradient(135deg, #fdf2f8, #f3e8ff, #ede9fe);
+  background:linear-gradient(135deg, #fce4ec, #f3e5f5, #ede7f6);
   flex-direction:column; align-items:center; justify-content:center;
 }
-.voice-call-overlay.active { display:flex; }
+.voice-call-overlay.active { display:flex; animation: fadeIn .4s ease-out; }
 .vc-avatar {
   width:120px; height:120px; border-radius:50%;
-  background:linear-gradient(135deg, #e879f9, #f9a8d4);
+  background:linear-gradient(135deg, #ce93d8, #f48fb1);
   display:flex; align-items:center; justify-content:center;
-  font-size:56px; margin-bottom:16px;
-  box-shadow: 0 0 60px rgba(232,121,249,.3);
+  margin-bottom:16px;
+  box-shadow: 0 0 60px rgba(206,147,216,.3);
   animation: vcPulse 2s ease-in-out infinite;
 }
-@keyframes vcPulse { 0%,100%{box-shadow:0 0 30px rgba(232,121,249,.2)} 50%{box-shadow:0 0 60px rgba(232,121,249,.4)} }
+.vc-avatar svg { width:56px; height:56px; color:#fff; }
+@keyframes vcPulse { 0%,100%{box-shadow:0 0 30px rgba(206,147,216,.2)} 50%{box-shadow:0 0 60px rgba(206,147,216,.4)} }
 .vc-avatar.speaking { animation: vcSpeak .3s ease-in-out infinite alternate; }
 @keyframes vcSpeak { from{transform:scale(1)} to{transform:scale(1.08)} }
 .vc-avatar.listening { box-shadow: 0 0 60px rgba(34,197,94,.4); }
@@ -424,8 +571,8 @@ body {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
 .vc-transcript {
   max-width:500px; min-height:60px; padding:16px 20px;
-  background:rgba(255,255,255,.7); border-radius:16px;
-  border:1px solid rgba(168,85,247,.1);
+  background:rgba(255,255,255,.7); border-radius:18px;
+  border:1px solid rgba(176,108,224,.1);
   font-size:14px; color:var(--text); line-height:1.6;
   margin-bottom:32px; text-align:center;
   backdrop-filter:blur(10px);
@@ -435,168 +582,283 @@ body {
 .vc-btn {
   width:64px; height:64px; border-radius:50%; border:none;
   display:flex; align-items:center; justify-content:center;
-  font-size:24px; cursor:pointer; transition:all .2s;
+  cursor:pointer; transition:all .2s;
 }
+.vc-btn svg { width:24px; height:24px; }
 .vc-btn:hover { transform:scale(1.1); }
-.vc-btn.mic { background:linear-gradient(135deg,#c084fc,#e879f9); color:#fff; }
+.vc-btn.mic { background:linear-gradient(135deg,#ce93d8,#f48fb1); color:#fff; }
 .vc-btn.mic.muted { background:#e5e7eb; color:#9ca3af; }
 .vc-btn.end { background:linear-gradient(135deg,#ef4444,#f472b6); color:#fff; }
-.vc-btn.end:hover { transform:scale(1.1); }
 .vc-subject-info {
   position:absolute; top:20px; left:50%; transform:translateX(-50%);
   padding:6px 16px; border-radius:20px;
-  background:rgba(255,255,255,.6); border:1px solid rgba(168,85,247,.1);
+  background:rgba(255,255,255,.6); border:1px solid rgba(176,108,224,.1);
   font-size:12px; color:var(--text2);
 }
 .vc-timer {
   position:absolute; top:20px; right:24px;
   font-size:14px; color:var(--text2); font-weight:600;
 }
+
+/* -- Mobile responsive -- */
+/* -- iPad -- */
+@media (max-width: 1024px) {
+  .sidebar { width:220px; min-width:220px; }
+  .quick-actions { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* -- Mobile + small iPad -- */
+@media (max-width: 768px) {
+  .sidebar { display:none !important; }
+  .app { flex-direction:column; }
+  .main { width:100%; height:calc(100vh - 64px); }
+  .main-content { padding:16px !important; }
+  .main-header { padding:12px 16px; }
+  .main-title { font-size:16px; }
+  .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap:10px; }
+  .quick-actions { grid-template-columns: repeat(2, 1fr); gap:8px; }
+  .quick-btn { padding:12px; }
+  .quick-btn .qicon { width:36px; height:36px; }
+  .notes-layout { flex-direction:column; }
+  .notes-list { width:100%; border-right:none; border-bottom:1px solid var(--border); padding-right:0; padding-bottom:12px; max-height:180px; }
+  .daily-card { flex-direction:column; text-align:center; gap:12px; }
+  .daily-cat { width:70px; height:70px; }
+  .stat-card { padding:14px; }
+  .stat-value { font-size:22px; }
+  .chat-input-row { gap:4px; }
+  .chat-btn { width:38px; height:38px; border-radius:10px; }
+  .chat-input { padding:10px 12px; font-size:13px; }
+  .msg { max-width:92%; padding:10px 14px; font-size:13px; }
+  .wrong-grid { grid-template-columns: 1fr; }
+  .resource-tabs { gap:4px; }
+  .resource-tab { padding:6px 12px; font-size:12px; }
+  .formula-card { padding:12px; }
+  .chapter-title { font-size:14px; }
+  .video-card { padding:10px; }
+  .pomo-circle { width:200px; height:200px; }
+  .pomo-time { font-size:42px; }
+  .pomodoro { padding-top:20px; }
+
+  /* Bottom nav bar */
+  .mobile-nav {
+    display:flex !important;
+    position:fixed; bottom:0; left:0; right:0;
+    background:rgba(255,255,255,.95);
+    backdrop-filter:blur(12px);
+    border-top:1px solid var(--border);
+    z-index:100; height:64px;
+    justify-content:space-around; align-items:center;
+    padding:0 4px; padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  .mobile-nav-item {
+    display:flex; flex-direction:column; align-items:center;
+    gap:2px; padding:6px 0; cursor:pointer;
+    color:var(--text3); font-size:10px; transition:color .2s;
+    flex:1; text-align:center;
+  }
+  .mobile-nav-item.active { color:var(--accent); font-weight:600; }
+  .mobile-nav-item svg { width:20px; height:20px; }
+
+  /* Voice call responsive */
+  .vc-avatar { width:90px; height:90px; }
+  .vc-avatar svg { width:40px; height:40px; }
+  .vc-transcript { max-width:90vw; font-size:13px; }
+  .vc-btn { width:54px; height:54px; }
+}
+
+/* -- Small phones -- */
+@media (max-width: 390px) {
+  .dashboard-grid { grid-template-columns: 1fr 1fr; gap:8px; }
+  .quick-actions { grid-template-columns: 1fr 1fr; gap:6px; }
+  .quick-btn .qdesc { display:none; }
+  .daily-quote-text { font-size:13px; }
+  .section-title { font-size:13px; }
+}
 </style>
 </head>
 <body>
 <div class="app">
-  <!-- 侧边栏 -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sidebar-header">
       <div class="logo">
-        <div class="logo-icon">🐱</div>
+        <div class="logo-icon"><i data-lucide="flower-2" stroke-width="2.5"></i></div>
         <div>
-          <div class="logo-text">喵学堂</div>
-          <div class="logo-school">衡阳市第一中学 🌸</div>
+          <div class="logo-text">栀言书院</div>
+          <div class="logo-school">衡阳市第一中学</div>
         </div>
       </div>
     </div>
 
-    <!-- 天气 -->
+    <!-- Weather -->
     <div class="weather-card" id="weatherCard">
       <div class="weather-top">
         <div>
           <span class="weather-temp" id="weatherTemp">--</span>°C
           <div class="weather-desc" id="weatherDesc">加载中...</div>
         </div>
-        <div style="font-size:36px" id="weatherIcon">🌤</div>
+        <div style="font-size:36px" id="weatherIcon"><i data-lucide="cloud-sun" style="width:36px;height:36px;color:var(--orange)"></i></div>
       </div>
       <div class="weather-tips" id="weatherTips"></div>
     </div>
 
-    <!-- 高考倒计时 -->
+    <!-- Countdown -->
     <div class="countdown-card">
       <div class="countdown-label">距离2027年高考</div>
       <div class="countdown-days" id="countdownDays">---</div>
       <div class="countdown-unit">天</div>
     </div>
 
-    <!-- 导航 -->
+    <!-- Dream university + target score -->
+    <div class="countdown-card" style="text-align:left;background:linear-gradient(135deg,rgba(206,147,216,.1),rgba(179,157,219,.1))">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;align-items:center;gap:4px"><i data-lucide="graduation-cap" style="width:12px;height:12px"></i> 目标大学</div>
+      <div style="font-size:12px;color:var(--text);line-height:1.8" id="dreamUnis">
+        <div style="display:flex;align-items:center;gap:4px"><i data-lucide="map-pin" style="width:10px;height:10px;color:var(--accent)"></i> 南京大学 · 东南大学 · 南理工</div>
+        <div style="display:flex;align-items:center;gap:4px"><i data-lucide="map-pin" style="width:10px;height:10px;color:var(--accent)"></i> 南航 · 河海 · 南师大</div>
+        <div style="display:flex;align-items:center;gap:4px"><i data-lucide="map-pin" style="width:10px;height:10px;color:var(--pink)"></i> 苏州大学 · 西交利物浦</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <div style="flex:1;background:rgba(255,255,255,.5);border-radius:10px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--text3)">目标分</div>
+          <div style="font-size:20px;font-weight:800;color:var(--accent)" contenteditable="true" id="targetScore" onblur="saveGoals()">630</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.5);border-radius:10px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--text3)">预估分</div>
+          <div style="font-size:20px;font-weight:800;color:var(--orange)" contenteditable="true" id="estimateScore" onblur="saveGoals()">--</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+        <div id="scoreProgress" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px;width:0%;transition:width .5s"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:4px" id="scoreGap"></div>
+    </div>
+
+    <!-- Nav -->
     <div class="nav-section">
       <div class="nav-label">功能</div>
       <div class="nav-item active" data-page="dashboard" onclick="switchPage('dashboard')">
-        <span class="icon">🏠</span> 学习概览
+        <span class="icon"><i data-lucide="layout-dashboard"></i></span> 学习概览
       </div>
       <div class="nav-item" data-page="ai" onclick="switchPage('ai')">
-        <span class="icon">🐱</span> 喵老师
+        <span class="icon"><i data-lucide="bot"></i></span> 栀老师
       </div>
       <div class="nav-item" data-page="resources" onclick="switchPage('resources')">
-        <span class="icon">📚</span> 课程资源
+        <span class="icon"><i data-lucide="book-open"></i></span> 课程资源
       </div>
       <div class="nav-item" data-page="notes" onclick="switchPage('notes')">
-        <span class="icon">📝</span> 我的笔记
+        <span class="icon"><i data-lucide="notebook-pen"></i></span> 我的笔记
       </div>
       <div class="nav-item" data-page="wrong" onclick="switchPage('wrong')">
-        <span class="icon">🩹</span> 错题本
+        <span class="icon"><i data-lucide="circle-x"></i></span> 错题本
         <span class="badge" id="wrongBadge" style="display:none">0</span>
       </div>
       <div class="nav-item" data-page="analysis" onclick="switchPage('analysis')">
-        <span class="icon">📈</span> 学习分析
+        <span class="icon"><i data-lucide="bar-chart-3"></i></span> 学习分析
       </div>
       <div class="nav-item" data-page="formulas" onclick="switchPage('formulas')">
-        <span class="icon">📋</span> 公式速查
+        <span class="icon"><i data-lucide="sigma"></i></span> 公式速查
+      </div>
+      <div class="nav-item" data-page="mistakes" onclick="switchPage('mistakes')">
+        <span class="icon"><i data-lucide="alert-triangle"></i></span> 易错点
       </div>
       <div class="nav-item" data-page="pomodoro" onclick="switchPage('pomodoro')">
-        <span class="icon">🍅</span> 番茄钟
+        <span class="icon"><i data-lucide="timer"></i></span> 番茄钟
+      </div>
+      <div class="nav-item" data-page="board" onclick="switchPage('board')">
+        <span class="icon"><i data-lucide="message-square-text"></i></span> 留言板
       </div>
     </div>
   </div>
 
-  <!-- 主区域 -->
+  <!-- Main -->
   <div class="main">
 
-    <!-- ===== 仪表盘 ===== -->
+    <!-- ===== Dashboard ===== -->
     <div class="page active" id="page-dashboard">
       <div class="main-header">
-        <div class="main-title">🏠 今日学习</div>
+        <div class="main-title"><i data-lucide="layout-dashboard"></i> 今日学习</div>
         <div style="font-size:12px;color:var(--text3)" id="todayDate"></div>
       </div>
       <div class="main-content">
+        <!-- Daily quote + cat -->
+        <div class="daily-card" id="dailyCard" style="display:none">
+          <div class="daily-quote">
+            <div class="daily-quote-text" id="dailyQuote"></div>
+            <div class="daily-quote-label"><i data-lucide="sparkles" style="width:12px;height:12px"></i> 每日一句</div>
+          </div>
+          <img class="daily-cat" id="dailyCat" alt="喵~" onerror="this.style.display='none'">
+        </div>
+
         <div class="dashboard-grid">
           <div class="stat-card">
-            <div class="stat-label">今日学习</div>
+            <div class="stat-label"><i data-lucide="clock"></i> 今日学习</div>
             <div class="stat-value" id="statToday">0<span style="font-size:14px;color:var(--text3)"> 分钟</span></div>
-            <div class="stat-sub">加油喵~ 🐾</div>
+            <div class="stat-sub">加油~</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">累计学习</div>
+            <div class="stat-label"><i data-lucide="trophy"></i> 累计学习</div>
             <div class="stat-value" id="statTotal">0<span style="font-size:14px;color:var(--text3)"> 小时</span></div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">笔记总数</div>
+            <div class="stat-label"><i data-lucide="notebook-pen"></i> 笔记总数</div>
             <div class="stat-value" id="statNotes">0</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">待攻克错题</div>
+            <div class="stat-label"><i data-lucide="alert-circle"></i> 待攻克错题</div>
             <div class="stat-value" style="color:var(--red)" id="statWrong">0</div>
           </div>
         </div>
 
-        <h3 style="font-size:15px;margin-bottom:12px">⚡ 快速开始</h3>
+        <div class="section-title"><i data-lucide="zap"></i> 快速开始</div>
         <div class="quick-actions">
           <div class="quick-btn" onclick="switchPage('ai')">
-            <div class="qicon">📸</div>
-            <div><div class="qlabel">拍题解答</div><div class="qdesc">拍照上传，喵老师详解~</div></div>
+            <div class="qicon" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0)"><i data-lucide="camera" style="color:#e91e63"></i></div>
+            <div><div class="qlabel">拍题解答</div><div class="qdesc">拍照上传，栀老师详解</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('ai');setTimeout(startVoiceCall,300)">
-            <div class="qicon">📞</div>
-            <div><div class="qlabel">语音辅导</div><div class="qdesc">像打电话一样问喵老师</div></div>
+            <div class="qicon" style="background:linear-gradient(135deg,#e8eaf6,#c5cae9)"><i data-lucide="phone" style="color:#5c6bc0"></i></div>
+            <div><div class="qlabel">语音辅导</div><div class="qdesc">像打电话一样问栀老师</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('wrong')">
-            <div class="qicon">🩹</div>
-            <div><div class="qlabel">添加错题</div><div class="qdesc">收集错题，下次不再错~</div></div>
+            <div class="qicon" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0)"><i data-lucide="file-plus" style="color:#ec407a"></i></div>
+            <div><div class="qlabel">添加错题</div><div class="qdesc">收集错题，下次不再错</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('pomodoro')">
-            <div class="qicon">🍅</div>
+            <div class="qicon" style="background:linear-gradient(135deg,#f3e5f5,#e1bee7)"><i data-lucide="timer" style="color:#ab47bc"></i></div>
             <div><div class="qlabel">开始学习</div><div class="qdesc">番茄钟专注模式</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('analysis')">
-            <div class="qicon">📈</div>
+            <div class="qicon" style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9)"><i data-lucide="bar-chart-3" style="color:#66bb6a"></i></div>
             <div><div class="qlabel">学习分析</div><div class="qdesc">找到薄弱点精准提分</div></div>
           </div>
           <div class="quick-btn" onclick="switchPage('resources')">
-            <div class="qicon">🎬</div>
+            <div class="qicon" style="background:linear-gradient(135deg,#fff3e0,#ffe0b2)"><i data-lucide="play-circle" style="color:#ff9800"></i></div>
             <div><div class="qlabel">看名师课</div><div class="qdesc">系统性学习视频</div></div>
           </div>
         </div>
 
-        <h3 style="font-size:15px;margin-bottom:12px">📈 各科学习时长</h3>
+        <div class="section-title"><i data-lucide="bar-chart-3"></i> 各科学习时长</div>
         <div id="subjectStats" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
       </div>
     </div>
 
-    <!-- ===== AI助手 ===== -->
+    <!-- ===== AI ===== -->
     <div class="page" id="page-ai">
       <div class="main-header">
-        <div class="main-title">🐱 喵老师</div>
+        <div class="main-title"><i data-lucide="bot"></i> 栀老师</div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" onclick="startVoiceCall()" style="background:linear-gradient(135deg,#c084fc,#e879f9)">📞 语音辅导</button>
-          <button class="btn btn-ghost" onclick="clearChat()">新对话</button>
+          <button class="btn btn-primary" onclick="startVoiceCall()"><i data-lucide="phone"></i> 语音辅导</button>
+          <button class="btn btn-ghost" onclick="clearChat()"><i data-lucide="plus"></i> 新对话</button>
         </div>
       </div>
       <div class="main-content" style="padding:16px 24px;display:flex;flex-direction:column;">
-        <div class="chat-container">
+        <div class="chat-container" id="chatContainer">
+          <div class="chat-drop-overlay" id="chatDropOverlay"><i data-lucide="image-plus" style="width:48px;height:48px;color:var(--accent)"></i><br>松手上传图片</div>
           <div class="chat-subject-bar" id="subjectBar"></div>
           <div class="chat-messages" id="chatMessages">
             <div class="empty-state">
-              <div class="empty-icon">🐱</div>
-              <div class="empty-text">选择科目，向喵老师提问吧~<br>支持文字、语音输入和拍照解题 🐾</div>
+              <div class="empty-icon"><i data-lucide="bot" style="width:48px;height:48px"></i></div>
+              <div class="empty-text">选择科目，向栀老师提问吧~<br>支持文字、语音输入和拍照解题</div>
             </div>
           </div>
           <div class="chat-input-area">
@@ -605,21 +867,22 @@ body {
               <button class="remove" onclick="removeImage()">×</button>
             </div>
             <div class="chat-input-row">
-              <button class="chat-btn upload" onclick="document.getElementById('fileInput').click()" title="上传图片/拍题">📷</button>
+              <button class="chat-btn upload" onclick="document.getElementById('fileInput').click()" title="上传图片"><i data-lucide="image-plus"></i></button>
               <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
-              <button class="chat-btn voice" id="voiceBtn" onclick="toggleVoice()" title="语音输入">🎤</button>
+              <button class="chat-btn camera" onclick="openCamera()" title="拍照解题"><i data-lucide="camera"></i></button>
+              <button class="chat-btn voice" id="voiceBtn" onclick="toggleVoice()" title="语音输入"><i data-lucide="mic"></i></button>
               <textarea class="chat-input" id="chatInput" placeholder="输入问题，或上传题目图片..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}" oninput="autoResize(this)"></textarea>
-              <button class="chat-btn send" onclick="sendMessage()" title="发送">➤</button>
+              <button class="chat-btn send" onclick="sendMessage()" title="发送"><i data-lucide="send"></i></button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== 课程资源 ===== -->
+    <!-- ===== Resources ===== -->
     <div class="page" id="page-resources">
       <div class="main-header">
-        <div class="main-title">📚 课程资源</div>
+        <div class="main-title"><i data-lucide="book-open"></i> 课程资源</div>
       </div>
       <div class="main-content">
         <div class="resource-tabs" id="resourceTabs"></div>
@@ -627,18 +890,18 @@ body {
       </div>
     </div>
 
-    <!-- ===== 笔记 ===== -->
+    <!-- ===== Notes ===== -->
     <div class="page" id="page-notes">
       <div class="main-header">
-        <div class="main-title">📝 我的笔记</div>
-        <button class="btn btn-primary" onclick="createNote()">+ 新笔记</button>
+        <div class="main-title"><i data-lucide="notebook-pen"></i> 我的笔记</div>
+        <button class="btn btn-primary" onclick="createNote()"><i data-lucide="plus"></i> 新笔记</button>
       </div>
       <div class="main-content" style="display:flex;padding:0;">
         <div class="notes-layout" style="width:100%;height:100%;padding:16px 24px;">
           <div class="notes-list" id="notesList"></div>
           <div class="notes-editor" id="notesEditor">
             <div class="empty-state">
-              <div class="empty-icon">📝</div>
+              <div class="empty-icon"><i data-lucide="notebook-pen" style="width:48px;height:48px"></i></div>
               <div class="empty-text">选择或创建一个笔记</div>
             </div>
           </div>
@@ -646,15 +909,15 @@ body {
       </div>
     </div>
 
-    <!-- ===== 错题本 ===== -->
+    <!-- ===== Wrong questions ===== -->
     <div class="page" id="page-wrong">
       <div class="main-header">
-        <div class="main-title">❌ 错题本</div>
+        <div class="main-title"><i data-lucide="circle-x"></i> 错题本</div>
         <div style="display:flex;gap:8px">
           <select id="wrongSubjectFilter" onchange="loadWrongQuestions()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:8px;font-size:12px">
             <option value="">全部科目</option>
           </select>
-          <button class="btn btn-primary" onclick="addWrongQuestion()">+ 添加错题</button>
+          <button class="btn btn-primary" onclick="addWrongQuestion()"><i data-lucide="plus"></i> 添加错题</button>
         </div>
       </div>
       <div class="main-content">
@@ -662,10 +925,10 @@ body {
       </div>
     </div>
 
-    <!-- ===== 公式速查 ===== -->
+    <!-- ===== Formulas ===== -->
     <div class="page" id="page-formulas">
       <div class="main-header">
-        <div class="main-title">📋 公式速查</div>
+        <div class="main-title"><i data-lucide="sigma"></i> 公式速查</div>
       </div>
       <div class="main-content">
         <div class="resource-tabs" id="formulaTabs"></div>
@@ -673,38 +936,49 @@ body {
       </div>
     </div>
 
-    <!-- ===== 学习分析 ===== -->
+    <!-- ===== Mistakes ===== -->
+    <div class="page" id="page-mistakes">
+      <div class="main-header">
+        <div class="main-title"><i data-lucide="alert-triangle"></i> 各科易错点</div>
+      </div>
+      <div class="main-content">
+        <div class="resource-tabs" id="mistakeTabs"></div>
+        <div id="mistakeContent"></div>
+      </div>
+    </div>
+
+    <!-- ===== Analysis ===== -->
     <div class="page" id="page-analysis">
       <div class="main-header">
-        <div class="main-title">📈 学习分析</div>
-        <button class="btn btn-primary" onclick="generateAnalysis()">🐱 AI诊断薄弱点</button>
+        <div class="main-title"><i data-lucide="bar-chart-3"></i> 学习分析</div>
+        <button class="btn btn-primary" onclick="generateAnalysis()"><i data-lucide="bot"></i> AI诊断薄弱点</button>
       </div>
       <div class="main-content">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
           <div class="stat-card">
-            <div class="stat-label">各科学习时间分布</div>
+            <div class="stat-label"><i data-lucide="clock"></i> 各科学习时间分布</div>
             <div id="analysisTimeChart" style="padding:16px 0"></div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">错题分布</div>
+            <div class="stat-label"><i data-lucide="circle-x"></i> 错题分布</div>
             <div id="analysisWrongChart" style="padding:16px 0"></div>
           </div>
         </div>
         <div class="stat-card" style="margin-bottom:16px">
-          <div class="stat-label" style="margin-bottom:12px">🎯 各科掌握度</div>
+          <div class="stat-label" style="margin-bottom:12px"><i data-lucide="target"></i> 各科掌握度</div>
           <div id="masteryBars"></div>
         </div>
         <div class="stat-card" id="aiAnalysis">
-          <div class="stat-label" style="margin-bottom:8px">🐱 AI学习建议</div>
+          <div class="stat-label" style="margin-bottom:8px"><i data-lucide="bot"></i> AI学习建议</div>
           <div style="color:var(--text3);font-size:13px">点击上方「AI诊断薄弱点」获取个性化学习建议~</div>
         </div>
       </div>
     </div>
 
-    <!-- ===== 番茄钟 ===== -->
+    <!-- ===== Pomodoro ===== -->
     <div class="page" id="page-pomodoro">
       <div class="main-header">
-        <div class="main-title">🍅 番茄钟</div>
+        <div class="main-title"><i data-lucide="timer"></i> 番茄钟</div>
       </div>
       <div class="main-content">
         <div class="pomodoro">
@@ -716,13 +990,30 @@ body {
             <div class="pomo-label" id="pomoLabel">专注学习</div>
           </div>
           <div class="pomo-controls">
-            <button class="pomo-btn start" id="pomoStartBtn" onclick="togglePomodoro()">开始</button>
-            <button class="pomo-btn stop" onclick="resetPomodoro()">重置</button>
+            <button class="pomo-btn start" id="pomoStartBtn" onclick="togglePomodoro()"><i data-lucide="play"></i> 开始</button>
+            <button class="pomo-btn stop" onclick="resetPomodoro()"><i data-lucide="rotate-ccw"></i> 重置</button>
           </div>
           <div style="margin-top:24px;text-align:center;color:var(--text3);font-size:12px">
-            <div>🍅 25分钟专注 → 5分钟休息 → 循环</div>
+            <div>25分钟专注 → 5分钟休息 → 循环</div>
             <div style="margin-top:8px" id="pomoStats">今日专注: 0 分钟 | 0 个番茄</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Message Board ===== -->
+    <div class="page" id="page-board">
+      <div class="main-header">
+        <div class="main-title"><i data-lucide="message-square-text"></i> 留言板</div>
+      </div>
+      <div class="main-content">
+        <div style="max-width:600px;margin:0 auto">
+          <div style="display:flex;gap:8px;margin-bottom:20px">
+            <input id="boardAuthor" placeholder="你的名字" style="width:100px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;outline:none" value="">
+            <input id="boardContent" placeholder="写下想对TA说的话..." style="flex:1;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:13px;outline:none" onkeydown="if(event.key==='Enter')postMessage()">
+            <button class="btn btn-primary" onclick="postMessage()" style="padding:10px 18px"><i data-lucide="send" style="width:14px;height:14px"></i></button>
+          </div>
+          <div id="boardMessages"></div>
         </div>
       </div>
     </div>
@@ -730,22 +1021,57 @@ body {
   </div>
 </div>
 
-<!-- 语音通话界面 -->
+<!-- Mobile bottom nav -->
+<div class="mobile-nav" style="display:none" id="mobileNav">
+  <div class="mobile-nav-item active" onclick="mobileSwitchPage('dashboard',this)"><i data-lucide="layout-dashboard"></i><span>首页</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('ai',this)"><i data-lucide="bot"></i><span>栀老师</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('resources',this)"><i data-lucide="book-open"></i><span>资源</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('formulas',this)"><i data-lucide="sigma"></i><span>公式</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('mistakes',this)"><i data-lucide="alert-triangle"></i><span>易错</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('notes',this)"><i data-lucide="notebook-pen"></i><span>笔记</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('wrong',this)"><i data-lucide="circle-x"></i><span>错题</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('board',this)"><i data-lucide="message-square-text"></i><span>留言</span></div>
+</div>
+
+<!-- Voice call overlay -->
 <div class="voice-call-overlay" id="voiceCallOverlay">
-  <div class="vc-subject-info" id="vcSubject">📎 全科辅导</div>
+  <div class="vc-subject-info" id="vcSubject">全科辅导</div>
   <div class="vc-timer" id="vcTimer">00:00</div>
-  <div class="vc-avatar" id="vcAvatar">🐱</div>
-  <div class="vc-name">喵老师</div>
+  <div class="vc-avatar" id="vcAvatar"><i data-lucide="flower-2" style="width:56px;height:56px;color:#fff"></i></div>
+  <div class="vc-name">栀老师</div>
   <div class="vc-status" id="vcStatus"><span class="dot green"></span>等待开始...</div>
-  <div class="vc-transcript" id="vcTranscript">点击下方麦克风按钮开始语音辅导~<br>直接说出你的问题，喵老师会语音回答你</div>
+  <div class="vc-transcript" id="vcTranscript">点击下方麦克风按钮开始语音辅导~<br>直接说出你的问题，栀老师会语音回答你</div>
   <div class="vc-controls">
-    <button class="vc-btn mic" id="vcMicBtn" onclick="toggleVoiceCallMic()">🎤</button>
-    <button class="vc-btn end" onclick="endVoiceCall()">📞</button>
+    <button class="vc-btn mic" id="vcMicBtn" onclick="toggleVoiceCallMic()"><i data-lucide="mic"></i></button>
+    <button class="vc-btn end" onclick="endVoiceCall()"><i data-lucide="phone-off"></i></button>
+  </div>
+</div>
+
+<!-- Camera modal -->
+<div class="camera-modal" id="cameraModal">
+  <div class="camera-box">
+    <video id="cameraVideo" autoplay playsinline></video>
+    <canvas id="cameraCanvas"></canvas>
+    <div class="camera-controls">
+      <button class="capture-btn" onclick="capturePhoto()"><i data-lucide="camera"></i> 拍照</button>
+      <button class="cancel-btn" onclick="closeCamera()"><i data-lucide="x"></i> 取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- Video embed modal -->
+<div class="video-modal" id="videoModal">
+  <div class="video-modal-box">
+    <div class="vm-header">
+      <div class="vm-title" id="vmTitle"></div>
+      <button class="vm-close" onclick="closeVideoModal()"><i data-lucide="x"></i></button>
+    </div>
+    <iframe id="vmIframe" src="" allowfullscreen></iframe>
   </div>
 </div>
 
 <script>
-// ── 全局状态 ──
+// ── Global state ──
 let currentPage = 'dashboard';
 let currentSubject = 'general';
 let chatMessages = [];
@@ -759,29 +1085,32 @@ let pomoRunning = false;
 let pomoIsBreak = false;
 let pomoTodayMin = 0;
 let pomoTodayCount = 0;
-
-// 语音识别
 let recognition = null;
 let isRecording = false;
+let cameraStream = null;
 
-// ── 初始化 ──
+// Subject icon map (lucide icon names)
+const subjectIcons = {
+  '语文':'book-open-text','数学':'calculator','英语':'languages','物理':'atom',
+  '化学':'flask-conical','生物':'dna','地理':'globe-2','综合':'library',
+};
+
+// ── Init ──
 async function init() {
-  // 日期
   const today = new Date();
   document.getElementById('todayDate').textContent =
     `${today.getFullYear()}年${today.getMonth()+1}月${today.getDate()}日 星期${'日一二三四五六'[today.getDay()]}`;
 
-  // 高考倒计时 (2027年6月7日)
   const gaokao = new Date(2027, 5, 7);
   const diff = Math.ceil((gaokao - today) / (1000 * 60 * 60 * 24));
   document.getElementById('countdownDays').textContent = diff;
 
-  // 加载数据
   loadWeather();
   loadSubjects();
   loadStats();
+  loadDailyCard();
+  loadGoals();
 
-  // 语音识别初始化
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     recognition = new SR();
@@ -796,16 +1125,84 @@ async function init() {
       }
       const input = document.getElementById('chatInput');
       if (final) input.value += final;
-      // 显示临时结果
       if (interim) input.placeholder = '听到: ' + interim;
     };
     recognition.onend = function() {
-      if (isRecording) recognition.start(); // 持续录音
+      if (isRecording) recognition.start();
     };
   }
+
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Drag & drop image upload
+  const chatContainer = document.getElementById('chatContainer');
+  const dropOverlay = document.getElementById('chatDropOverlay');
+  let dragCounter = 0;
+
+  chatContainer.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragCounter++;
+    dropOverlay.classList.add('active');
+  });
+  chatContainer.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dragCounter--;
+    if (dragCounter <= 0) { dropOverlay.classList.remove('active'); dragCounter = 0; }
+  });
+  chatContainer.addEventListener('dragover', (e) => e.preventDefault());
+  chatContainer.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragCounter = 0;
+    dropOverlay.classList.remove('active');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        uploadedImage = ev.target.result;
+        document.getElementById('previewImg').src = uploadedImage;
+        document.getElementById('imagePreview').style.display = 'inline-block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Paste image upload (Ctrl+V)
+  document.addEventListener('paste', (e) => {
+    if (currentPage !== 'ai') return;
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          uploadedImage = ev.target.result;
+          document.getElementById('previewImg').src = uploadedImage;
+          document.getElementById('imagePreview').style.display = 'inline-block';
+        };
+        reader.readAsDataURL(file);
+        break;
+      }
+    }
+  });
 }
 
-// ── 天气 ──
+// ── Daily card ──
+async function loadDailyCard() {
+  try {
+    const resp = await fetch('/api/daily');
+    const data = await resp.json();
+    if (data.quote) {
+      document.getElementById('dailyQuote').textContent = `"${data.quote}"`;
+      document.getElementById('dailyCat').src = data.cat_image;
+      document.getElementById('dailyCard').style.display = 'flex';
+    }
+  } catch(e) {}
+}
+
+// ── Weather ──
 async function loadWeather() {
   try {
     const resp = await fetch('/api/weather');
@@ -813,55 +1210,53 @@ async function loadWeather() {
     if (data.error) return;
     document.getElementById('weatherTemp').textContent = data.temp;
     document.getElementById('weatherDesc').textContent = `${data.city} · ${data.desc}`;
-    // 天气图标
-    const icons = {'晴':'☀️','多云':'⛅','阴':'☁️','小雨':'🌦','中雨':'🌧','大雨':'🌧','雨':'🌧','雪':'❄️','雾':'🌫','雷暴':'⛈'};
-    document.getElementById('weatherIcon').textContent = icons[data.desc] || '🌤';
-    // 提示
+    const weatherIconMap = {'晴':'sun','多云':'cloud-sun','阴':'cloud','小雨':'cloud-drizzle','中雨':'cloud-rain','大雨':'cloud-rain','雨':'cloud-rain','雪':'snowflake','雾':'cloud-fog','雷暴':'cloud-lightning'};
+    const iconName = weatherIconMap[data.desc] || 'cloud-sun';
+    document.getElementById('weatherIcon').innerHTML = `<i data-lucide="${iconName}" style="width:36px;height:36px;color:var(--orange)"></i>`;
     const tips = document.getElementById('weatherTips');
     tips.innerHTML = '';
     (data.tips || []).forEach(t => {
       tips.innerHTML += `<div class="weather-tip">${t}</div>`;
     });
+    lucide.createIcons();
   } catch(e) {}
 }
 
-// ── 科目 ──
+// ── Subjects ──
 async function loadSubjects() {
   try {
     const resp = await fetch('/api/resources/subjects');
     subjects = await resp.json();
   } catch(e) {
     subjects = [
-      {name:'语文',icon:'📖',color:'#e86450'},
-      {name:'数学',icon:'📐',color:'#3b82f6'},
-      {name:'英语',icon:'🌍',color:'#10b981'},
-      {name:'物理',icon:'⚡',color:'#8b5cf6'},
-      {name:'化学',icon:'🧪',color:'#f59e0b'},
-      {name:'生物',icon:'🧬',color:'#06b6d4'},
+      {name:'语文',icon:'book-open-text',color:'#e86450'},
+      {name:'数学',icon:'calculator',color:'#3b82f6'},
+      {name:'英语',icon:'languages',color:'#10b981'},
+      {name:'物理',icon:'atom',color:'#8b5cf6'},
+      {name:'化学',icon:'flask-conical',color:'#f59e0b'},
+      {name:'生物',icon:'dna',color:'#06b6d4'},
     ];
   }
-  // 科目选择条
   const bar = document.getElementById('subjectBar');
-  bar.innerHTML = `<div class="subject-chip active" onclick="selectSubject('general',this)">📎 全科</div>`;
+  bar.innerHTML = `<div class="subject-chip active" onclick="selectSubject('general',this)"><i data-lucide="library" style="width:14px;height:14px"></i> 全科</div>`;
   subjects.forEach(s => {
-    bar.innerHTML += `<div class="subject-chip" onclick="selectSubject('${s.name}',this)">${s.icon} ${s.name}</div>`;
+    const iconName = subjectIcons[s.name] || 'book';
+    bar.innerHTML += `<div class="subject-chip" onclick="selectSubject('${s.name}',this)"><i data-lucide="${iconName}" style="width:14px;height:14px"></i> ${s.name}</div>`;
   });
-  // 番茄钟科目
   const pomo = document.getElementById('pomoSubject');
   subjects.forEach(s => {
-    pomo.innerHTML += `<option value="${s.name}">${s.icon} ${s.name}</option>`;
+    pomo.innerHTML += `<option value="${s.name}">${s.name}</option>`;
   });
-  // 错题筛选
   const wf = document.getElementById('wrongSubjectFilter');
   subjects.forEach(s => {
     wf.innerHTML += `<option value="${s.name}">${s.name}</option>`;
   });
-  // 资源页标签
   renderResourceTabs();
   renderFormulaTabs();
+  lucide.createIcons();
 }
 
-// ── 统计 ──
+// ── Stats ──
 async function loadStats() {
   try {
     const resp = await fetch('/api/progress/stats');
@@ -875,25 +1270,24 @@ async function loadStats() {
       document.getElementById('wrongBadge').style.display = '';
       document.getElementById('wrongBadge').textContent = unmastered;
     }
-    // 各科时长
     const container = document.getElementById('subjectStats');
     container.innerHTML = '';
     if (data.subject_study && data.subject_study.length > 0) {
       data.subject_study.forEach(s => {
         const subj = subjects.find(x => x.name === s.subject);
         container.innerHTML += `<div class="stat-card" style="min-width:120px;border-left:3px solid ${subj?.color||'var(--accent)'}">
-          <div class="stat-label">${subj?.icon||''} ${s.subject}</div>
+          <div class="stat-label">${s.subject}</div>
           <div class="stat-value" style="font-size:20px">${Math.round(s.total_min/60*10)/10}<span style="font-size:12px;color:var(--text3)">h</span></div>
           <div class="stat-sub">${s.sessions}次学习</div>
         </div>`;
       });
     } else {
-      container.innerHTML = '<div style="color:var(--text3);font-size:12px">还没有学习记录，开始你的第一个番茄钟吧！</div>';
+      container.innerHTML = '<div style="color:var(--text3);font-size:12px">还没有学习记录，开始你的第一个番茄钟吧!</div>';
     }
   } catch(e) {}
 }
 
-// ── 页面切换 ──
+// ── Page switch ──
 function switchPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -902,11 +1296,13 @@ function switchPage(name) {
   currentPage = name;
   if (name === 'notes') loadNotes();
   if (name === 'wrong') loadWrongQuestions();
-  if (name === 'dashboard') loadStats();
+  if (name === 'dashboard') { loadStats(); loadDailyCard(); }
   if (name === 'analysis') loadAnalysis();
+  if (name === 'mistakes') renderMistakeTabs();
+  if (name === 'board') loadBoard();
 }
 
-// ── AI聊天 ──
+// ── AI Chat ──
 function selectSubject(name, el) {
   currentSubject = name;
   document.querySelectorAll('.subject-chip').forEach(c => c.classList.remove('active'));
@@ -936,7 +1332,42 @@ function removeImage() {
   document.getElementById('imagePreview').style.display = 'none';
 }
 
-// 语音输入
+// ── Camera ──
+async function openCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = cameraStream;
+    document.getElementById('cameraModal').classList.add('active');
+    lucide.createIcons();
+  } catch(e) {
+    alert('无法打开摄像头，请检查权限设置或使用上传图片功能');
+  }
+}
+
+function capturePhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('cameraCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  uploadedImage = canvas.toDataURL('image/jpeg', 0.85);
+  document.getElementById('previewImg').src = uploadedImage;
+  document.getElementById('imagePreview').style.display = 'inline-block';
+  closeCamera();
+}
+
+function closeCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  document.getElementById('cameraModal').classList.remove('active');
+}
+
+// ── Voice input ──
 function toggleVoice() {
   if (!recognition) {
     alert('你的浏览器不支持语音输入，请使用Chrome浏览器');
@@ -947,20 +1378,21 @@ function toggleVoice() {
     recognition.stop();
     isRecording = false;
     btn.classList.remove('recording');
-    btn.textContent = '🎤';
+    btn.innerHTML = '<i data-lucide="mic"></i>';
     document.getElementById('chatInput').placeholder = '输入问题，或上传题目图片...';
+    lucide.createIcons();
   } else {
     recognition.start();
     isRecording = true;
     btn.classList.add('recording');
-    btn.textContent = '⏹';
+    btn.innerHTML = '<i data-lucide="mic-off"></i>';
+    lucide.createIcons();
   }
 }
 
 function renderMarkdown(text) {
   try {
-    let html = marked.parse(text);
-    return html;
+    return marked.parse(text);
   } catch(e) {
     return text.replace(/\n/g, '<br>');
   }
@@ -968,7 +1400,6 @@ function renderMarkdown(text) {
 
 function addMessageToUI(role, content, imageUrl) {
   const container = document.getElementById('chatMessages');
-  // 清空空状态
   const empty = container.querySelector('.empty-state');
   if (empty) empty.remove();
 
@@ -981,7 +1412,6 @@ function addMessageToUI(role, content, imageUrl) {
     div.innerHTML = html;
   } else {
     div.innerHTML = renderMarkdown(content);
-    // 渲染LaTeX
     setTimeout(() => {
       renderMathInElement(div, {
         delimiters: [
@@ -1004,10 +1434,8 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text && !uploadedImage) return;
 
-  // 显示用户消息
   addMessageToUI('user', text, uploadedImage);
 
-  // 构建消息
   let content;
   if (uploadedImage) {
     content = [];
@@ -1022,11 +1450,8 @@ async function sendMessage() {
   input.value = '';
   input.style.height = 'auto';
   removeImage();
-
-  // 停止语音
   if (isRecording) toggleVoice();
 
-  // 创建AI回复
   const aiDiv = addMessageToUI('assistant', '');
   aiDiv.innerHTML = '<span style="color:var(--text3)">思考中...</span>';
 
@@ -1058,10 +1483,7 @@ async function sendMessage() {
             fullText += data.text;
             aiDiv.innerHTML = renderMarkdown(fullText);
             renderMathInElement(aiDiv, {
-              delimiters: [
-                {left:'$$',right:'$$',display:true},
-                {left:'$',right:'$',display:false},
-              ],
+              delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
               throwOnError:false,
             });
             document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
@@ -1084,26 +1506,28 @@ function clearChat() {
   currentChatId = null;
   document.getElementById('chatMessages').innerHTML = `
     <div class="empty-state">
-      <div class="empty-icon">🐱</div>
-      <div class="empty-text">选择科目，向喵老师提问吧~<br>支持文字、语音输入和拍照解题 🐾</div>
+      <div class="empty-icon"><i data-lucide="bot" style="width:48px;height:48px"></i></div>
+      <div class="empty-text">选择科目，向栀老师提问吧~<br>支持文字、语音输入和拍照解题</div>
     </div>`;
+  lucide.createIcons();
 }
 
-// ── 笔记 ──
+// ── Notes ──
 async function loadNotes() {
   try {
     const resp = await fetch('/api/notes/');
     const notes = await resp.json();
     const list = document.getElementById('notesList');
     if (notes.length === 0) {
-      list.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">还没有笔记</div></div>';
+      list.innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="notebook-pen" style="width:36px;height:36px"></i></div><div class="empty-text">还没有笔记</div></div>';
+      lucide.createIcons();
       return;
     }
     list.innerHTML = '';
     notes.forEach(n => {
       const subj = subjects.find(s => s.name === n.subject);
       list.innerHTML += `<div class="note-card ${n.id === currentNoteId ? 'active':''}" onclick="openNote(${n.id})">
-        <div class="nc-subject" style="color:${subj?.color||'var(--accent2)'}">${subj?.icon||''} ${n.subject} ${n.chapter?'· '+n.chapter:''}</div>
+        <div class="nc-subject" style="color:${subj?.color||'var(--accent2)'}">${n.subject} ${n.chapter?'· '+n.chapter:''}</div>
         <div class="nc-title">${n.is_pinned?'📌 ':''}${n.title}</div>
         <div class="nc-date">${n.updated_at?.slice(0,16)}</div>
       </div>`;
@@ -1135,7 +1559,7 @@ async function openNote(id) {
 
     const editor = document.getElementById('notesEditor');
     let subjectOptions = subjects.map(s =>
-      `<option value="${s.name}" ${s.name===note.subject?'selected':''}>${s.icon} ${s.name}</option>`
+      `<option value="${s.name}" ${s.name===note.subject?'selected':''}>${s.name}</option>`
     ).join('');
 
     editor.innerHTML = `
@@ -1143,12 +1567,12 @@ async function openNote(id) {
       <div class="note-meta">
         <select id="noteSubject" onchange="saveNote()">${subjectOptions}</select>
         <input type="text" placeholder="章节" value="${note.chapter}" id="noteChapter" onchange="saveNote()"
-          style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:4px 8px;border-radius:6px;font-size:11px;width:120px">
-        <button class="btn btn-ghost" onclick="deleteNote(${id})" style="margin-left:auto;color:var(--red);border-color:var(--red)">删除</button>
+          style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);padding:4px 8px;border-radius:8px;font-size:11px;width:120px">
+        <button class="btn btn-ghost" onclick="deleteNote(${id})" style="margin-left:auto;color:var(--red);border-color:var(--red)"><i data-lucide="trash-2" style="width:12px;height:12px"></i> 删除</button>
       </div>
       <textarea class="note-editor-area" id="noteContent" onchange="saveNote()" placeholder="在这里写笔记...支持Markdown格式">${note.content}</textarea>
     `;
-    // 高亮当前笔记
+    lucide.createIcons();
     document.querySelectorAll('.note-card').forEach(c => c.classList.remove('active'));
     document.querySelector(`.note-card[onclick="openNote(${id})"]`)?.classList.add('active');
   } catch(e) {}
@@ -1174,11 +1598,12 @@ async function deleteNote(id) {
   if (!confirm('确定删除这个笔记？')) return;
   await fetch(`/api/notes/${id}`, {method:'DELETE'});
   currentNoteId = null;
-  document.getElementById('notesEditor').innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><div class="empty-text">选择或创建一个笔记</div></div>';
+  document.getElementById('notesEditor').innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="notebook-pen" style="width:48px;height:48px"></i></div><div class="empty-text">选择或创建一个笔记</div></div>';
+  lucide.createIcons();
   loadNotes();
 }
 
-// ── 错题本 ──
+// ── Wrong questions ──
 async function loadWrongQuestions() {
   const subject = document.getElementById('wrongSubjectFilter').value;
   try {
@@ -1186,7 +1611,8 @@ async function loadWrongQuestions() {
     const items = await resp.json();
     const grid = document.getElementById('wrongGrid');
     if (items.length === 0) {
-      grid.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-text">没有错题，继续保持！</div></div>';
+      grid.innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="check-circle" style="width:48px;height:48px;color:var(--green)"></i></div><div class="empty-text">没有错题，继续保持!</div></div>';
+      lucide.createIcons();
       return;
     }
     grid.innerHTML = '';
@@ -1194,13 +1620,13 @@ async function loadWrongQuestions() {
       const subj = subjects.find(s => s.name === w.subject);
       grid.innerHTML += `<div class="wrong-card ${w.mastered?'mastered':''}" onclick="viewWrong(${w.id})">
         <div class="wrong-header">
-          <span class="wrong-subject" style="background:${subj?.color||'var(--accent)'}22;color:${subj?.color||'var(--accent)'}">${subj?.icon||''} ${w.subject}</span>
-          <span class="wrong-diff">${'⭐'.repeat(w.difficulty)}</span>
+          <span class="wrong-subject" style="background:${subj?.color||'var(--accent)'}22;color:${subj?.color||'var(--accent)'}">${w.subject}</span>
+          <span class="wrong-diff">${'★'.repeat(w.difficulty)}${'☆'.repeat(5-w.difficulty)}</span>
         </div>
         <div class="wrong-question">${w.question_text?.slice(0,100) || (w.has_image?'[图片题目]':'')}</div>
         <div class="wrong-footer">
           <span>${w.chapter||''}</span>
-          <span>${w.mastered?'✅ 已掌握':'❌ 未掌握'} · 复习${w.review_count}次</span>
+          <span>${w.mastered?'已掌握':'未掌握'} · 复习${w.review_count}次</span>
         </div>
       </div>`;
     });
@@ -1208,7 +1634,6 @@ async function loadWrongQuestions() {
 }
 
 function addWrongQuestion() {
-  // 简易弹窗
   const subject = prompt('科目（如：数学、物理）:');
   if (!subject) return;
   const question = prompt('题目内容（或留空后上传图片）:');
@@ -1230,9 +1655,9 @@ async function viewWrong(id) {
     const resp = await fetch(`/api/wrong/${id}`);
     const w = await resp.json();
     const action = confirm(
-      `📝 题目: ${w.question_text||'[图片]'}\n\n` +
-      `❌ 我的答案: ${w.my_answer}\n` +
-      `✅ 正确答案: ${w.correct_answer}\n\n` +
+      `题目: ${w.question_text||'[图片]'}\n\n` +
+      `我的答案: ${w.my_answer}\n` +
+      `正确答案: ${w.correct_answer}\n\n` +
       `AI解析: ${w.ai_analysis||'暂无'}\n\n` +
       `状态: ${w.mastered?'已掌握':'未掌握'}\n\n` +
       `点确定标记为${w.mastered?'未掌握':'已掌握'}，取消关闭`
@@ -1248,15 +1673,17 @@ async function viewWrong(id) {
   } catch(e) {}
 }
 
-// ── 课程资源 ──
+// ── Resources ──
 let currentResourceSubject = '数学';
 
 function renderResourceTabs() {
   const tabs = document.getElementById('resourceTabs');
   tabs.innerHTML = '';
   subjects.forEach((s,i) => {
-    tabs.innerHTML += `<div class="resource-tab ${i===1?'active':''}" onclick="switchResource('${s.name}',this)">${s.icon} ${s.name}</div>`;
+    const iconName = subjectIcons[s.name] || 'book';
+    tabs.innerHTML += `<div class="resource-tab ${i===1?'active':''}" onclick="switchResource('${s.name}',this)"><i data-lucide="${iconName}" style="width:14px;height:14px"></i> ${s.name}</div>`;
   });
+  lucide.createIcons();
   switchResource('数学', tabs.querySelector('.active'));
 }
 
@@ -1271,11 +1698,11 @@ async function switchResource(name, el) {
   let html = '';
   (subj.chapters || []).forEach(ch => {
     html += `<div class="chapter-section">
-      <div class="chapter-title" style="cursor:pointer" onclick="toggleChapter('${ch.id}')">${subj.icon} ${ch.name} <span style="font-size:12px;color:var(--text3)">▼</span></div>
+      <div class="chapter-title" onclick="toggleChapter('${ch.id}')"><i data-lucide="chevron-down" style="width:16px;height:16px"></i> ${ch.name}</div>
       <div id="chapter-body-${ch.id}">
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">
           ${(ch.sections||[]).map(s =>
-            `<span style="padding:5px 12px;border-radius:8px;font-size:11px;background:rgba(255,255,255,.8);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s"
+            `<span style="padding:5px 12px;border-radius:10px;font-size:11px;background:rgba(255,255,255,.85);border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .2s"
               onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
               onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text2)'"
               onclick="askAboutSection('${name}','${ch.name}','${s}')">${s}</span>`
@@ -1283,20 +1710,21 @@ async function switchResource(name, el) {
         </div>
         <div id="knotes-${ch.id}" style="margin-bottom:12px"></div>
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-          <button class="btn btn-primary" style="font-size:11px;padding:6px 12px" onclick="generateChapterNotes('${name}','${ch.name}','notes-${ch.id}')">📝 生成详细笔记</button>
-          <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" onclick="generateChapterQuiz('${name}','${ch.name}','notes-${ch.id}')">📋 生成练习题</button>
+          <button class="btn btn-primary" style="font-size:11px;padding:6px 12px" onclick="generateChapterNotes('${name}','${ch.name}','notes-${ch.id}')"><i data-lucide="notebook-pen" style="width:12px;height:12px"></i> 生成详细笔记</button>
+          <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px" onclick="generateChapterQuiz('${name}','${ch.name}','notes-${ch.id}')"><i data-lucide="list-checks" style="width:12px;height:12px"></i> 生成练习题</button>
         </div>
         <div id="notes-${ch.id}"></div>
         <div id="videos-${ch.id}" style="margin-top:8px">
-          <div style="color:var(--text3);font-size:12px;padding:8px">⏳ 加载资源中...</div>
+          <div style="color:var(--text3);font-size:12px;padding:8px">加载资源中...</div>
         </div>
       </div>
     </div>`;
   });
 
   document.getElementById('resourceContent').innerHTML = html;
+  lucide.createIcons();
 
-  // 加载每个章节的知识点卡片
+  // Load chapter knowledge cards
   (subj.chapters||[]).forEach(async (ch) => {
     try {
       const resp = await fetch(`/api/resources/chapter-notes?subject=${encodeURIComponent(name)}&chapter=${encodeURIComponent(ch.name)}`);
@@ -1305,32 +1733,31 @@ async function switchResource(name, el) {
       if (!container || !note.key_points || note.key_points.length === 0) return;
       const stars = '★'.repeat(note.difficulty) + '☆'.repeat(5 - note.difficulty);
       container.innerHTML = `
-        <div style="background:rgba(255,255,255,.9);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(168,85,247,.04)">
+        <div style="background:rgba(255,255,255,.92);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:var(--shadow-sm)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
             <div style="font-size:13px;font-weight:600;color:var(--accent)">${note.summary}</div>
             <div style="font-size:11px;color:var(--orange)">${stars}</div>
           </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap">
             <div style="flex:1;min-width:250px">
-              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">📌 核心知识点</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">核心知识点</div>
               ${note.key_points.map(p => `<div style="font-size:12px;line-height:1.8;color:var(--text);padding-left:8px;border-left:2px solid var(--accent);margin-bottom:4px">${p}</div>`).join('')}
             </div>
             <div style="min-width:200px">
               ${note.formulas.length > 0 ? `
-                <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">📐 核心公式</div>
+                <div style="font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:600">核心公式</div>
                 ${note.formulas.map(f => `<div style="font-size:12px;line-height:1.8;color:var(--text);margin-bottom:2px">${f}</div>`).join('')}
               ` : ''}
-              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;margin-top:8px;font-weight:600">⚠️ 考试技巧</div>
+              <div style="font-size:11px;color:var(--text3);margin-bottom:6px;margin-top:8px;font-weight:600">考试技巧</div>
               ${note.exam_tips.map(t => `<div style="font-size:11px;line-height:1.6;color:var(--red);margin-bottom:3px">• ${t}</div>`).join('')}
             </div>
           </div>
         </div>`;
-      // 渲染LaTeX
       setTimeout(() => { renderMathInElement(container, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false}); }, 100);
     } catch(e) {}
   });
 
-  // 按章节分别加载视频资源
+  // Load videos per chapter
   (subj.chapters||[]).forEach(async (ch) => {
     try {
       const resp = await fetch(`/api/resources/videos?subject=${encodeURIComponent(name)}&chapter=${encodeURIComponent(ch.name)}`);
@@ -1341,16 +1768,27 @@ async function switchResource(name, el) {
         container.innerHTML = '<div style="color:var(--text3);font-size:12px">暂无视频资源</div>';
         return;
       }
-      container.innerHTML = videos.map(v =>
-        `<a href="${v.url}" target="_blank" class="video-card">
-          <div class="video-icon" style="font-size:20px">${v.platform==='bilibili'?'📺':v.platform==='国家平台'?'📕':v.platform==='学科网'?'📗':v.platform==='知乎'?'📘':v.platform==='MOOC'?'🎓':'📺'}</div>
+      container.innerHTML = videos.map(v => {
+        const hasBV = v.platform === 'bilibili' && v.url.includes('/video/');
+        const platformIcons = {'bilibili':'play-circle','国家平台':'graduation-cap','学科网':'file-text','知乎':'message-circle','MOOC':'school','西瓜视频':'tv'};
+        const iconName = platformIcons[v.platform] || 'play-circle';
+        const platformColors = {'bilibili':'#fb7299','国家平台':'#1976d2','学科网':'#4caf50','知乎':'#0066ff','MOOC':'#8bc34a','西瓜视频':'#ff6040'};
+        const color = platformColors[v.platform] || 'var(--accent)';
+        const safeTitle = v.title.replace(/'/g,"\\'").replace(/"/g,'&quot;');
+        const onclick = hasBV
+          ? `onclick="openBilibiliVideo('${v.url}','${safeTitle}');return false"`
+          : `onclick="openVideoEmbed('${v.url}','${safeTitle}');return false"`;
+        return `<a href="${v.url}" class="video-card" ${onclick}>
+          <div class="video-icon" style="background:${color}15"><i data-lucide="${iconName}" style="color:${color};width:18px;height:18px"></i></div>
           <div class="video-info">
             <div class="video-title">${v.title}</div>
             <div class="video-teacher">${v.teacher} · ${v.duration||v.platform}</div>
           </div>
           ${v.play > 0 ? `<div style="font-size:11px;color:var(--text3)">${v.play > 10000 ? Math.round(v.play/10000)+'万' : v.play}播放</div>` : ''}
-        </a>`
-      ).join('');
+          ${hasBV ? '<div style="font-size:10px;color:var(--accent);font-weight:600">站内播放</div>' : ''}
+        </a>`;
+      }).join('');
+      lucide.createIcons();
     } catch(e) {
       const container = document.getElementById(`videos-${ch.id}`);
       if (container) container.innerHTML = '<div style="color:var(--text3);font-size:12px">资源加载失败</div>';
@@ -1363,10 +1801,40 @@ function toggleChapter(id) {
   if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
 }
 
+// ── B站 video embed ──
+function openBilibiliVideo(url, title) {
+  // Extract BV id from URL
+  const match = url.match(/video\/(BV[a-zA-Z0-9]+)/);
+  if (!match) { window.open(url, '_blank'); return; }
+  const bvid = match[1];
+  document.getElementById('vmTitle').textContent = title;
+  document.getElementById('vmIframe').src = `https://player.bilibili.com/player.html?bvid=${bvid}&autoplay=1&high_quality=1`;
+  document.getElementById('videoModal').classList.add('active');
+  lucide.createIcons();
+}
+
+function openVideoEmbed(url, title) {
+  document.getElementById('vmTitle').textContent = title;
+  document.getElementById('vmIframe').src = url;
+  document.getElementById('videoModal').classList.add('active');
+  lucide.createIcons();
+}
+
+function closeVideoModal() {
+  document.getElementById('vmIframe').src = '';
+  document.getElementById('videoModal').classList.remove('active');
+}
+
+// Close modals on backdrop click
+document.addEventListener('click', function(e) {
+  if (e.target === document.getElementById('videoModal')) closeVideoModal();
+  if (e.target === document.getElementById('cameraModal')) closeCamera();
+});
+
 async function generateChapterNotes(subject, chapter, targetId) {
   const target = document.getElementById(targetId);
   if (!target) return;
-  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.8);border-radius:12px;border:1px solid var(--border)"><div style="color:var(--accent)">📝 喵老师正在为你生成「'+chapter+'」的详细笔记...</div></div>';
+  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.85);border-radius:14px;border:1px solid var(--border)"><div style="color:var(--accent)">栀老师正在为你生成「'+chapter+'」的详细笔记...</div></div>';
 
   const prompt = `请为高中${subject}「${chapter}」生成一份完整的学习笔记，包含：
 1. 核心概念和定义（简洁清晰）
@@ -1391,7 +1859,7 @@ async function generateChapterNotes(subject, chapter, targetId) {
         if (!line.startsWith('data: ')) continue;
         try {
           const data = JSON.parse(line.slice(6));
-          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.9);border-radius:12px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
+          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.92);border-radius:14px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
         } catch(e) {}
       }
     }
@@ -1402,7 +1870,7 @@ async function generateChapterNotes(subject, chapter, targetId) {
 async function generateChapterQuiz(subject, chapter, targetId) {
   const target = document.getElementById(targetId);
   if (!target) return;
-  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.8);border-radius:12px;border:1px solid var(--border)"><div style="color:var(--accent)">📋 喵老师正在出题...</div></div>';
+  target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.85);border-radius:14px;border:1px solid var(--border)"><div style="color:var(--accent)">栀老师正在出题...</div></div>';
 
   const prompt = `请为高中${subject}「${chapter}」出5道练习题：
 - 3道选择题（4个选项，标注正确答案）
@@ -1424,7 +1892,7 @@ async function generateChapterQuiz(subject, chapter, targetId) {
         if (!line.startsWith('data: ')) continue;
         try {
           const data = JSON.parse(line.slice(6));
-          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.9);border-radius:12px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
+          if (data.text) { fullText += data.text; target.innerHTML = '<div style="padding:16px;background:rgba(255,255,255,.92);border-radius:14px;border:1px solid var(--border);font-size:13px;line-height:1.8">' + renderMarkdown(fullText) + '</div>'; }
         } catch(e) {}
       }
     }
@@ -1439,16 +1907,19 @@ function askAboutSection(subject, chapter, section) {
   document.getElementById('chatInput').focus();
 }
 
-// ── 公式速查 ──
+// ── Formula tabs ──
 let currentFormulaSubject = '数学';
 
 function renderFormulaTabs() {
   const tabs = document.getElementById('formulaTabs');
   tabs.innerHTML = '';
-  ['数学','物理','化学'].forEach((name,i) => {
+  const formulaSubjects = ['数学','物理','化学','地理'];
+  formulaSubjects.forEach((name,i) => {
     const subj = subjects.find(s => s.name === name);
-    tabs.innerHTML += `<div class="resource-tab ${i===0?'active':''}" onclick="switchFormula('${name}',this)">${subj?.icon||''} ${name}</div>`;
+    const iconName = subjectIcons[name] || 'book';
+    tabs.innerHTML += `<div class="resource-tab ${i===0?'active':''}" onclick="switchFormula('${name}',this)"><i data-lucide="${iconName}" style="width:14px;height:14px"></i> ${name}</div>`;
   });
+  lucide.createIcons();
   switchFormula('数学', tabs.querySelector('.active'));
 }
 
@@ -1470,20 +1941,56 @@ async function switchFormula(name, el) {
       html += '</div>';
       container.innerHTML += html;
     });
-    // 渲染LaTeX
     setTimeout(() => {
       renderMathInElement(container, {
-        delimiters: [
-          {left:'$$',right:'$$',display:true},
-          {left:'$',right:'$',display:false},
-        ],
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
         throwOnError:false,
       });
     }, 100);
   } catch(e) {}
 }
 
-// ── 番茄钟 ──
+// ── Mistakes (易错点) ──
+function renderMistakeTabs() {
+  const tabs = document.getElementById('mistakeTabs');
+  if (!tabs) return;
+  tabs.innerHTML = '';
+  const mistakeSubjects = ['数学','物理','化学','英语','地理'];
+  mistakeSubjects.forEach((name,i) => {
+    const iconName = subjectIcons[name] || 'book';
+    tabs.innerHTML += `<div class="resource-tab ${i===0?'active':''}" onclick="switchMistake('${name}',this)"><i data-lucide="${iconName}" style="width:14px;height:14px"></i> ${name}</div>`;
+  });
+  lucide.createIcons();
+  switchMistake('数学', tabs.querySelector('.active'));
+}
+
+async function switchMistake(name, el) {
+  document.querySelectorAll('#mistakeTabs .resource-tab').forEach(t => t.classList.remove('active'));
+  el?.classList.add('active');
+  try {
+    const resp = await fetch(`/api/resources/mistakes?subject=${name}`);
+    const data = await resp.json();
+    const container = document.getElementById('mistakeContent');
+    container.innerHTML = '';
+    (Array.isArray(data) ? data : []).forEach(group => {
+      let html = `<div class="formula-card" style="border-left:3px solid var(--red)">
+        <div class="formula-chapter" style="color:var(--red)">${group.chapter}</div>`;
+      (group.mistakes||[]).forEach(m => {
+        html += `<div class="formula-item" style="color:var(--text);font-size:13px;line-height:1.8">• ${m}</div>`;
+      });
+      html += '</div>';
+      container.innerHTML += html;
+    });
+    setTimeout(() => {
+      renderMathInElement(container, {
+        delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+        throwOnError:false,
+      });
+    }, 100);
+  } catch(e) {}
+}
+
+// ── Pomodoro ──
 function updatePomoDisplay() {
   const min = Math.floor(pomoSeconds / 60);
   const sec = pomoSeconds % 60;
@@ -1495,12 +2002,14 @@ function togglePomodoro() {
   if (pomoRunning) {
     clearInterval(pomoTimer);
     pomoRunning = false;
-    document.getElementById('pomoStartBtn').textContent = '继续';
+    document.getElementById('pomoStartBtn').innerHTML = '<i data-lucide="play"></i> 继续';
     document.getElementById('pomoCircle').classList.remove('running','break');
+    lucide.createIcons();
   } else {
     pomoRunning = true;
-    document.getElementById('pomoStartBtn').textContent = '暂停';
+    document.getElementById('pomoStartBtn').innerHTML = '<i data-lucide="pause"></i> 暂停';
     document.getElementById('pomoCircle').classList.add(pomoIsBreak ? 'break' : 'running');
+    lucide.createIcons();
     pomoTimer = setInterval(() => {
       pomoSeconds--;
       updatePomoDisplay();
@@ -1508,10 +2017,8 @@ function togglePomodoro() {
         clearInterval(pomoTimer);
         pomoRunning = false;
         if (!pomoIsBreak) {
-          // 专注结束
           pomoTodayMin += 25;
           pomoTodayCount++;
-          // 记录到后端
           fetch('/api/progress/session', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
@@ -1523,25 +2030,24 @@ function togglePomodoro() {
           });
           document.getElementById('pomoStats').textContent =
             `今日专注: ${pomoTodayMin} 分钟 | ${pomoTodayCount} 个番茄`;
-          // 切换到休息
           pomoIsBreak = true;
           pomoSeconds = 5 * 60;
           document.getElementById('pomoLabel').textContent = '休息时间';
           document.getElementById('pomoCircle').classList.remove('running');
           document.getElementById('pomoCircle').classList.add('break');
-          try { new Notification('🍅 番茄钟', {body:'专注25分钟完成！休息5分钟吧~'}); } catch(e) {}
-          alert('🍅 专注25分钟完成！休息5分钟~');
+          try { new Notification('番茄钟', {body:'专注25分钟完成!休息5分钟吧~'}); } catch(e) {}
+          alert('专注25分钟完成! 休息5分钟~');
         } else {
-          // 休息结束
           pomoIsBreak = false;
           pomoSeconds = 25 * 60;
           document.getElementById('pomoLabel').textContent = '专注学习';
           document.getElementById('pomoCircle').classList.remove('break');
-          alert('⏰ 休息结束，开始下一个番茄钟！');
+          alert('休息结束，开始下一个番茄钟!');
         }
         updatePomoDisplay();
-        document.getElementById('pomoStartBtn').textContent = '开始';
+        document.getElementById('pomoStartBtn').innerHTML = '<i data-lucide="play"></i> 开始';
         document.getElementById('pomoCircle').classList.remove('running','break');
+        lucide.createIcons();
       }
     }, 1000);
   }
@@ -1554,11 +2060,12 @@ function resetPomodoro() {
   pomoSeconds = 25 * 60;
   updatePomoDisplay();
   document.getElementById('pomoLabel').textContent = '专注学习';
-  document.getElementById('pomoStartBtn').textContent = '开始';
+  document.getElementById('pomoStartBtn').innerHTML = '<i data-lucide="play"></i> 开始';
   document.getElementById('pomoCircle').classList.remove('running','break');
+  lucide.createIcons();
 }
 
-// ── 语音通话辅导 ──
+// ── Voice call ──
 let vcActive = false;
 let vcRecognition = null;
 let vcSynth = window.speechSynthesis;
@@ -1580,13 +2087,13 @@ function startVoiceCall() {
   vcProcessing = false;
 
   const subj = subjects.find(s => s.name === currentSubject);
-  document.getElementById('vcSubject').textContent = subj ? `${subj.icon} ${subj.name}辅导` : '📎 全科辅导';
+  document.getElementById('vcSubject').textContent = subj ? `${subj.name}辅导` : '全科辅导';
   document.getElementById('voiceCallOverlay').classList.add('active');
-  document.getElementById('vcTranscript').innerHTML = '🎤 请说出你的问题...';
+  document.getElementById('vcTranscript').innerHTML = '请说出你的问题...';
   document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
   document.getElementById('vcAvatar').className = 'vc-avatar listening';
+  lucide.createIcons();
 
-  // 计时器
   vcTimerInterval = setInterval(() => {
     vcSeconds++;
     const m = Math.floor(vcSeconds / 60).toString().padStart(2, '0');
@@ -1594,7 +2101,6 @@ function startVoiceCall() {
     document.getElementById('vcTimer').textContent = `${m}:${s}`;
   }, 1000);
 
-  // 初始化语音识别
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   vcRecognition = new SR();
   vcRecognition.continuous = true;
@@ -1616,10 +2122,9 @@ function startVoiceCall() {
       }
     }
     document.getElementById('vcTranscript').innerHTML =
-      (finalText ? `<div style="color:var(--accent);margin-bottom:4px">🗣 ${finalText}</div>` : '') +
+      (finalText ? `<div style="color:var(--accent);margin-bottom:4px">${finalText}</div>` : '') +
       (interim ? `<div style="color:var(--text3)">...${interim}</div>` : '');
 
-    // 说完一句话后2秒没有新内容，自动发送
     clearTimeout(silenceTimer);
     if (finalText.trim()) {
       silenceTimer = setTimeout(() => {
@@ -1639,7 +2144,6 @@ function startVoiceCall() {
 
   vcRecognition.onerror = function(e) {
     if (e.error === 'no-speech') return;
-    console.log('语音识别错误:', e.error);
   };
 
   try { vcRecognition.start(); } catch(e) {}
@@ -1647,18 +2151,15 @@ function startVoiceCall() {
 
 async function vcProcessAndReply(userText) {
   vcProcessing = true;
-  document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>喵老师正在思考...';
+  document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>栀老师正在思考...';
   document.getElementById('vcAvatar').className = 'vc-avatar';
 
-  // 暂停识别
   try { vcRecognition.stop(); } catch(e) {}
-
   vcMessages.push({role: 'user', content: userText});
 
-  // 显示用户说的话
   document.getElementById('vcTranscript').innerHTML =
     `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
-    `<div style="color:var(--text2)">🐱 思考中...</div>`;
+    `<div style="color:var(--text2)">思考中...</div>`;
 
   try {
     const resp = await fetch('/api/ai/chat', {
@@ -1689,16 +2190,13 @@ async function vcProcessAndReply(userText) {
 
     vcMessages.push({role: 'assistant', content: fullText});
 
-    // 显示回答
     document.getElementById('vcTranscript').innerHTML =
       `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${userText}</div>` +
-      `<div style="font-size:13px;line-height:1.6">🐱 ${fullText.slice(0, 500)}${fullText.length > 500 ? '...' : ''}</div>`;
+      `<div style="font-size:13px;line-height:1.6">${fullText.slice(0, 500)}${fullText.length > 500 ? '...' : ''}</div>`;
 
-    // 语音播报
-    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>喵老师正在说话...';
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师正在说话...';
     document.getElementById('vcAvatar').className = 'vc-avatar speaking';
 
-    // 清理文本用于语音（去掉公式、代码等）
     let speakText = fullText
       .replace(/\$[^$]+\$/g, '公式')
       .replace(/```[\s\S]*?```/g, '代码')
@@ -1713,7 +2211,6 @@ async function vcProcessAndReply(userText) {
       `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
   }
 
-  // 说完后继续听
   vcProcessing = false;
   if (vcActive && vcMicOn) {
     document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
@@ -1730,7 +2227,6 @@ function vcSpeak(text) {
     utter.lang = 'zh-CN';
     utter.rate = 1.1;
     utter.pitch = 1.1;
-    // 选择中文女声
     const voices = vcSynth.getVoices();
     const zhVoice = voices.find(v => v.lang.includes('zh') && v.name.includes('Female'))
       || voices.find(v => v.lang.includes('zh-CN'))
@@ -1739,7 +2235,6 @@ function vcSpeak(text) {
     utter.onend = resolve;
     utter.onerror = resolve;
     vcSynth.speak(utter);
-    // 安全超时
     setTimeout(resolve, 60000);
   });
 }
@@ -1749,17 +2244,18 @@ function toggleVoiceCallMic() {
   const btn = document.getElementById('vcMicBtn');
   if (vcMicOn) {
     btn.className = 'vc-btn mic';
-    btn.textContent = '🎤';
+    btn.innerHTML = '<i data-lucide="mic"></i>';
     document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 正在听你说话';
     document.getElementById('vcAvatar').className = 'vc-avatar listening';
     if (!vcProcessing) try { vcRecognition.start(); } catch(e) {}
   } else {
     btn.className = 'vc-btn mic muted';
-    btn.textContent = '🔇';
+    btn.innerHTML = '<i data-lucide="mic-off"></i>';
     document.getElementById('vcStatus').innerHTML = '<span class="dot"></span>麦克风已静音';
     document.getElementById('vcAvatar').className = 'vc-avatar';
     try { vcRecognition.stop(); } catch(e) {}
   }
+  lucide.createIcons();
 }
 
 function endVoiceCall() {
@@ -1770,7 +2266,6 @@ function endVoiceCall() {
   try { vcSynth.cancel(); } catch(e) {}
   document.getElementById('voiceCallOverlay').classList.remove('active');
 
-  // 把语音对话内容加到文字聊天里
   if (vcMessages.length > 0) {
     chatMessages = chatMessages.concat(vcMessages);
     const container = document.getElementById('chatMessages');
@@ -1782,7 +2277,7 @@ function endVoiceCall() {
   }
 }
 
-// ── 学习分析 ──
+// ── Analysis ──
 async function loadAnalysis() {
   try {
     const [statsResp, wrongResp] = await Promise.all([
@@ -1792,7 +2287,6 @@ async function loadAnalysis() {
     const stats = await statsResp.json();
     const wrongItems = await wrongResp.json();
 
-    // 学习时间柱状图（简易CSS柱状图）
     const timeChart = document.getElementById('analysisTimeChart');
     const subjectStudy = stats.subject_study || [];
     const maxMin = Math.max(...subjectStudy.map(s => s.total_min), 1);
@@ -1801,18 +2295,17 @@ async function loadAnalysis() {
         const subj = subjects.find(x => x.name === s.subject);
         const pct = Math.round(s.total_min / maxMin * 100);
         return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="width:50px;font-size:12px;text-align:right">${subj?.icon||''} ${s.subject}</span>
-          <div style="flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${subj?.color||'#c084fc'},#f9a8d4);border-radius:4px;transition:width .5s"></div>
+          <span style="width:50px;font-size:12px;text-align:right">${s.subject}</span>
+          <div style="flex:1;height:20px;background:var(--bg3);border-radius:6px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${subj?.color||'#ce93d8'},#f48fb1);border-radius:6px;transition:width .5s"></div>
           </div>
           <span style="font-size:11px;color:var(--text2);width:50px">${Math.round(s.total_min/60*10)/10}h</span>
         </div>`;
       }).join('');
     } else {
-      timeChart.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">还没有学习记录哦~ 开个番茄钟试试 🍅</div>';
+      timeChart.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">还没有学习记录哦~ 开个番茄钟试试</div>';
     }
 
-    // 错题分布
     const wrongChart = document.getElementById('analysisWrongChart');
     const wrongBySubject = {};
     wrongItems.forEach(w => {
@@ -1825,30 +2318,28 @@ async function loadAnalysis() {
         const subj = subjects.find(x => x.name === name);
         const pct = Math.round(count / maxWrong * 100);
         return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="width:50px;font-size:12px;text-align:right">${subj?.icon||''} ${name}</span>
-          <div style="flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#f472b6,#fbbf24);border-radius:4px"></div>
+          <span style="width:50px;font-size:12px;text-align:right">${name}</span>
+          <div style="flex:1;height:20px;background:var(--bg3);border-radius:6px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#f472b6,#fbbf24);border-radius:6px"></div>
           </div>
           <span style="font-size:11px;color:var(--red);width:30px;font-weight:600">${count}</span>
         </div>`;
       }).join('');
     } else {
-      wrongChart.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">没有错题记录~ 太棒了 ✨</div>';
+      wrongChart.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:20px">没有错题记录~ 太棒了</div>';
     }
 
-    // 掌握度条（基于学习时间+错题比例估算）
     const masteryBars = document.getElementById('masteryBars');
     masteryBars.innerHTML = '';
     subjects.forEach(s => {
       const study = subjectStudy.find(x => x.subject === s.name);
       const wrong = wrongBySubject[s.name] || 0;
       const studyMin = study?.total_min || 0;
-      // 简单估算: 学习时间越多分越高，错题越多分越低
       let score = Math.min(100, Math.round(studyMin / 60 * 15) - wrong * 3);
       score = Math.max(0, score);
       const color = score >= 70 ? 'var(--green)' : score >= 40 ? 'var(--orange)' : 'var(--red)';
       masteryBars.innerHTML += `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <span style="width:60px;font-size:12px">${s.icon} ${s.name}</span>
+        <span style="width:60px;font-size:12px">${s.name}</span>
         <div style="flex:1;height:12px;background:var(--bg3);border-radius:6px;overflow:hidden">
           <div style="height:100%;width:${score}%;background:${color};border-radius:6px;transition:width .5s"></div>
         </div>
@@ -1856,14 +2347,13 @@ async function loadAnalysis() {
       </div>`;
     });
 
-  } catch(e) {
-    console.error('加载分析数据失败:', e);
-  }
+  } catch(e) {}
 }
 
 async function generateAnalysis() {
   const panel = document.getElementById('aiAnalysis');
-  panel.innerHTML = '<div class="stat-label" style="margin-bottom:8px">🐱 AI学习建议</div><div style="color:var(--text2);font-size:13px">喵老师正在分析你的学习数据...</div>';
+  panel.innerHTML = '<div class="stat-label" style="margin-bottom:8px"><i data-lucide="bot" style="width:14px;height:14px"></i> AI学习建议</div><div style="color:var(--text2);font-size:13px">栀老师正在分析你的学习数据...</div>';
+  lucide.createIcons();
 
   try {
     const [statsResp, wrongResp] = await Promise.all([
@@ -1873,7 +2363,6 @@ async function generateAnalysis() {
     const stats = await statsResp.json();
     const wrongItems = await wrongResp.json();
 
-    // 构建分析prompt
     const wrongSummary = {};
     wrongItems.forEach(w => {
       if (!wrongSummary[w.subject]) wrongSummary[w.subject] = [];
@@ -1891,10 +2380,10 @@ ${(stats.subject_study||[]).map(s => `- ${s.subject}: ${Math.round(s.total_min/6
 ${Object.entries(wrongSummary).map(([k,v]) => `- ${k}(${v.length}题): ${v.slice(0,5).join('、')}`).join('\n') || '暂无'}
 
 请给出：
-1. 🎯 薄弱科目诊断（哪些科目需要重点关注）
-2. 📋 具体学习建议（按优先级排序，每科给1-2条具体建议）
-3. ⏰ 每日学习计划建议（时间分配）
-4. 💡 提分小技巧
+1. 薄弱科目诊断（哪些科目需要重点关注）
+2. 具体学习建议（按优先级排序，每科给1-2条具体建议）
+3. 每日学习计划建议（时间分配）
+4. 提分小技巧
 
 用温暖鼓励的语气，简洁实用，不要太长。`;
 
@@ -1909,8 +2398,9 @@ ${Object.entries(wrongSummary).map(([k,v]) => `- ${k}(${v.length}题): ${v.slice
     let fullText = '';
     const contentDiv = document.createElement('div');
     contentDiv.style.cssText = 'font-size:13px;line-height:1.8;margin-top:8px';
-    panel.innerHTML = '<div class="stat-label" style="margin-bottom:8px">🐱 AI学习建议</div>';
+    panel.innerHTML = '<div class="stat-label" style="margin-bottom:8px"><i data-lucide="bot" style="width:14px;height:14px"></i> AI学习建议</div>';
     panel.appendChild(contentDiv);
+    lucide.createIcons();
 
     while (true) {
       const {done, value} = await reader.read();
@@ -1928,11 +2418,146 @@ ${Object.entries(wrongSummary).map(([k,v]) => `- ${k}(${v.length}题): ${v.slice
       }
     }
   } catch(e) {
-    panel.innerHTML = '<div class="stat-label">🐱 AI学习建议</div><div style="color:var(--red);font-size:13px">分析失败: ' + e.message + '</div>';
+    panel.innerHTML = '<div class="stat-label">AI学习建议</div><div style="color:var(--red);font-size:13px">分析失败: ' + e.message + '</div>';
   }
 }
 
-// ── 启动 ──
+// ── Mobile nav ──
+function mobileSwitchPage(name, el) {
+  switchPage(name);
+  document.querySelectorAll('.mobile-nav-item').forEach(i => i.classList.remove('active'));
+  el?.classList.add('active');
+}
+
+// ── Goals (target/estimate score) ──
+function saveGoals() {
+  const target = document.getElementById('targetScore')?.textContent?.trim() || '630';
+  const estimate = document.getElementById('estimateScore')?.textContent?.trim() || '--';
+  localStorage.setItem('targetScore', target);
+  localStorage.setItem('estimateScore', estimate);
+  updateScoreProgress();
+}
+
+function loadGoals() {
+  const target = localStorage.getItem('targetScore') || '630';
+  const estimate = localStorage.getItem('estimateScore') || '--';
+  const tEl = document.getElementById('targetScore');
+  const eEl = document.getElementById('estimateScore');
+  if (tEl) tEl.textContent = target;
+  if (eEl) eEl.textContent = estimate;
+  updateScoreProgress();
+}
+
+function updateScoreProgress() {
+  const target = parseInt(document.getElementById('targetScore')?.textContent) || 630;
+  const estimate = parseInt(document.getElementById('estimateScore')?.textContent) || 0;
+  const bar = document.getElementById('scoreProgress');
+  const gap = document.getElementById('scoreGap');
+  if (!bar || !gap) return;
+  if (estimate > 0) {
+    const pct = Math.min(100, Math.round(estimate / target * 100));
+    bar.style.width = pct + '%';
+    const diff = target - estimate;
+    gap.textContent = diff > 0 ? `距目标还差 ${diff} 分，加油!` : `已达目标! 继续保持!`;
+  } else {
+    bar.style.width = '0%';
+    gap.textContent = '点击预估分填写你的当前水平';
+  }
+}
+
+// ── Message board ──
+async function loadBoard() {
+  try {
+    const resp = await fetch('/api/messages/');
+    const msgs = await resp.json();
+    const container = document.getElementById('boardMessages');
+    if (!msgs.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon"><i data-lucide="message-square-text" style="width:48px;height:48px"></i></div><div class="empty-text">还没有留言，写下第一条吧~</div></div>';
+      lucide.createIcons();
+      return;
+    }
+    container.innerHTML = msgs.map(m => `
+      <div class="stat-card" style="margin-bottom:12px;padding:16px;animation:fadeIn .3s ease-out">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:600;color:var(--accent)">${m.author}</div>
+          <div style="font-size:11px;color:var(--text3)">${m.created_at?.slice(0,16)}</div>
+        </div>
+        <div style="font-size:14px;line-height:1.7;color:var(--text)">${m.content}</div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+async function postMessage() {
+  const author = document.getElementById('boardAuthor').value.trim();
+  const content = document.getElementById('boardContent').value.trim();
+  if (!author || !content) { alert('名字和内容都要填哦~'); return; }
+  try {
+    await fetch('/api/messages/', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({author, content}),
+    });
+    document.getElementById('boardContent').value = '';
+    loadBoard();
+  } catch(e) {}
+}
+
+// ── Fun facts / cold jokes popup (every 30 min) ──
+const funFacts = [
+  {title:"冷知识", text:"蜂蜜永远不会变质。考古学家在埃及金字塔中发现了3000年前的蜂蜜，仍然可以食用。"},
+  {title:"冷知识", text:"章鱼有三颗心脏，两颗负责给鳃供血，一颗负责给全身供血。游泳时全身心脏会停止跳动，所以章鱼更喜欢爬行。"},
+  {title:"冷知识", text:"一张纸最多只能对折7次（普通大小），无论纸有多大多薄。"},
+  {title:"物理冷知识", text:"如果你能以光速移动，时间会完全停止。这就是爱因斯坦相对论的时间膨胀效应。"},
+  {title:"化学冷知识", text:"人体内含有足够的碳来制造约9000支铅笔，足够的铁来制造一根7.6厘米的钉子。"},
+  {title:"数学冷知识", text:"如果你把一张0.1毫米厚的纸对折42次，它的厚度将超过地球到月球的距离（约38万公里）。"},
+  {title:"英语冷知识", text:"\"rhythm\"（节奏）是英语中最长的没有元音字母的单词。"},
+  {title:"地理冷知识", text:"俄罗斯横跨11个时区，当最东边的人吃午饭时，最西边的人还在睡觉。"},
+  {title:"生物冷知识", text:"人类的DNA有99.9%是相同的，只有0.1%的差异造就了每个人的独特。"},
+  {title:"冷笑话", text:"为什么数学书总是很忧郁？因为它有太多问题了。"},
+  {title:"冷笑话", text:"物理老师问：光速是多少？学生：我不知道，但它肯定超速了。"},
+  {title:"冷笑话", text:"化学老师：H2O是水，那H2O2是什么？学生：用来喝的水！（双氧水）"},
+  {title:"冷笑话", text:"地理老师：赤道为什么是最热的地方？学生：因为它一直在被太阳烤（考）。"},
+  {title:"冷笑话", text:"英语老师：past tense of \"think\" is什么？学生：\"thunk\"！"},
+  {title:"冷笑话", text:"为什么植物不会数学？因为它们只会做光合作用，不会做加减乘除。"},
+  {title:"学习小贴士", text:"番茄工作法的发明者用的是一个番茄形状的厨房计时器，所以才叫番茄工作法。"},
+  {title:"学习小贴士", text:"研究表明，手写笔记比打字笔记的记忆效果好30%以上，因为手写需要更多的认知加工。"},
+  {title:"学习小贴士", text:"大脑在学习新知识后的24小时内会遗忘约70%的内容，所以当天复习特别重要。"},
+  {title:"历史冷知识", text:"牛顿发明微积分的时候才23岁，当时他正在家躲避瘟疫（和我们居家学习差不多）。"},
+  {title:"历史冷知识", text:"爱因斯坦小时候说话很晚，4岁才开始说话，老师曾认为他智力有问题。"},
+];
+
+let funFactTimer = null;
+function startFunFactTimer() {
+  if (funFactTimer) clearInterval(funFactTimer);
+  funFactTimer = setInterval(() => {
+    const fact = funFacts[Math.floor(Math.random() * funFacts.length)];
+    showFunFactPopup(fact);
+  }, 30 * 60 * 1000); // 30 minutes
+}
+
+function showFunFactPopup(fact) {
+  const existing = document.getElementById('funFactPopup');
+  if (existing) existing.remove();
+  const popup = document.createElement('div');
+  popup.id = 'funFactPopup';
+  popup.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:900;max-width:340px;background:rgba(255,255,255,.95);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 8px 32px rgba(176,108,224,.15);animation:slideInRight .4s ease-out;backdrop-filter:blur(10px)';
+  popup.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:4px"><i data-lucide="lightbulb" style="width:16px;height:16px"></i> ${fact.title}</div>
+      <button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px">&times;</button>
+    </div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text)">${fact.text}</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:8px">学习30分钟了，休息一下~</div>
+  `;
+  document.body.appendChild(popup);
+  lucide.createIcons();
+  setTimeout(() => { popup.style.opacity = '0'; popup.style.transition = 'opacity .5s'; setTimeout(() => popup.remove(), 500); }, 15000);
+}
+
+startFunFactTimer();
+
+// ── Start ──
 init();
 </script>
 </body>

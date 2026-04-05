@@ -58,6 +58,15 @@ class StudyProgress(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
+class Message(Base):
+    """留言板"""
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True, index=True)
+    author = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, server_default=func.now())
+
+
 class ChatHistory(Base):
     """AI对话历史"""
     __tablename__ = "chat_history"
