@@ -1266,6 +1266,53 @@ async function init() {
     };
   }
 
+  // ── 自动学习时间追踪 ──
+  let trackingSubject = '';
+  let trackingStart = 0;
+  const STUDY_PAGES = ['ai','resources','formulas','mistakes','notes','wrong'];
+
+  function startTracking(page) {
+    // 结束上一次追踪
+    saveTracking();
+    if (STUDY_PAGES.includes(page)) {
+      trackingSubject = currentSubject === 'general' ? '综合' : currentSubject;
+      trackingStart = Date.now();
+    } else {
+      trackingStart = 0;
+    }
+  }
+
+  function saveTracking() {
+    if (!trackingStart) return;
+    const mins = Math.floor((Date.now() - trackingStart) / 60000);
+    if (mins >= 1) {
+      fetch('/api/progress/session', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
+      }).catch(() => {});
+    }
+    trackingStart = 0;
+  }
+
+  // 每5分钟自动保存一次（防止关页面丢失）
+  setInterval(() => {
+    if (trackingStart && STUDY_PAGES.includes(currentPage)) {
+      const mins = Math.floor((Date.now() - trackingStart) / 60000);
+      if (mins >= 5) {
+        fetch('/api/progress/session', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ subject: trackingSubject || '综合', duration_min: mins, session_type: 'browse' }),
+        }).catch(() => {});
+        trackingStart = Date.now(); // 重置
+      }
+    }
+  }, 5 * 60 * 1000);
+
+  // 页面关闭/刷新时保存
+  window.addEventListener('beforeunload', saveTracking);
+
   // Initialize Lucide icons
   lucide.createIcons();
 
@@ -1441,6 +1488,7 @@ function switchPage(name) {
   if (name === 'graph') setTimeout(initDesmos, 100);
   if (name === 'board') loadBoard();
   if (name === 'ai') onChatPageOpen();
+  if (typeof startTracking === 'function') startTracking(name);
 }
 
 // ── AI Chat ──
@@ -1993,7 +2041,7 @@ async function switchResource(name, el) {
             <div class="video-title">${v.title}</div>
             <div class="video-teacher">${v.teacher} · B站</div>
           </div>
-          <div style="font-size:10px;color:#fb7299;font-weight:600;white-space:nowrap">站内播放</div>
+          <div style="font-size:10px;color:#fb7299;font-weight:600;white-space:nowrap">去B站看</div>
         </div>`;
       }).join('');
       lucide.createIcons();
@@ -2009,16 +2057,10 @@ function toggleChapter(id) {
   if (body) body.style.display = body.style.display === 'none' ? '' : 'none';
 }
 
-// ── B站 video embed ──
+// ── B站视频 ──
 function openBilibiliVideo(url, title) {
-  // Extract BV id from URL
-  const match = url.match(/video\/(BV[a-zA-Z0-9]+)/);
-  if (!match) { window.open(url, '_blank'); return; }
-  const bvid = match[1];
-  document.getElementById('vmTitle').textContent = title;
-  document.getElementById('vmIframe').src = `https://player.bilibili.com/player.html?bvid=${bvid}&autoplay=1&high_quality=1`;
-  document.getElementById('videoModal').classList.add('active');
-  lucide.createIcons();
+  // 直接在新标签页打开B站，避免iframe广告问题
+  window.open(url, '_blank');
 }
 
 function openVideoEmbed(url, title) {
