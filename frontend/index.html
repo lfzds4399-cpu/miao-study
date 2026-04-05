@@ -616,7 +616,7 @@ body {
   .sidebar { display:none !important; }
   .app { flex-direction:column; }
   .main { width:100%; height:calc(100vh - 56px); }
-  .main-content { padding:14px !important; padding-bottom:20px !important; }
+  .main-content { padding:14px !important; padding-bottom:66px !important; }
   .main-header { padding:10px 14px; }
   .main-title { font-size:15px; }
   .dashboard-grid { grid-template-columns: repeat(2, 1fr); gap:8px; }
@@ -633,9 +633,12 @@ body {
   .stat-card { padding:12px; }
   .stat-value { font-size:20px; }
   .stat-label { font-size:11px; }
+  /* Chat page: input area above bottom nav */
+  .chat-container { padding-bottom:60px; }
+  .chat-input-area { position:fixed; bottom:56px; left:0; right:0; padding:8px 14px !important; background:rgba(255,255,255,.95); backdrop-filter:blur(10px); border-top:1px solid var(--border); z-index:50; }
   .chat-input-row { gap:3px; }
-  .chat-btn { width:36px; height:36px; border-radius:10px; }
-  .chat-input { padding:9px 10px; font-size:13px; border-radius:12px; }
+  .chat-btn { width:34px; height:34px; border-radius:10px; }
+  .chat-input { padding:8px 10px; font-size:13px; border-radius:12px; min-height:36px; }
   .msg { max-width:92%; padding:10px 12px; font-size:13px; }
   .wrong-grid { grid-template-columns: 1fr; }
   .resource-tabs { gap:3px; overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px; }
