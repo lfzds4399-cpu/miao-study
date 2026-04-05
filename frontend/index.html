@@ -2471,13 +2471,12 @@ async function vcStartListening() {
     source2.connect(vcScriptNode);
     vcScriptNode.connect(audioCtx2.destination);
     vcPcmSampleRate = audioCtx2.sampleRate;
-    // 也保留MediaRecorder作为备用但不依赖它
+    // MediaRecorder仅作备用，主要用PCM录音
     vcMediaRecorder = new MediaRecorder(vcMicStream);
-    vcMediaRecorder.start();
     vcMediaRecorder.ondataavailable = (e) => {
       if (e.data.size > 0) vcAudioChunks.push(e.data);
     };
-    vcMediaRecorder.start(250); // 每250ms收集一次数据
+    vcMediaRecorder.start(250);
     vcHasVoice = false;
     vcSilenceStart = 0;
 
