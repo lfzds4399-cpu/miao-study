@@ -198,24 +198,20 @@ async def voice_chat(
 
     # Step 1: Whisper STT
     audio_data = await audio.read()
-    # 根据上传文件的类型确定扩展名（Whisper对此敏感）
-    ct = (audio.content_type or "").split(";")[0].strip()  # 去掉 codecs=opus 等后缀
-    fname = audio.filename or "audio.webm"
-    # Whisper支持的格式: flac, m4a, mp3, mp4, mpeg, mpga, oga, ogg, wav, webm
-    if "mp4" in ct or "mp4" in fname:
-        upload_name, upload_ct = "audio.mp4", "audio/mp4"
-    elif "ogg" in ct or "opus" in (audio.content_type or ""):
-        upload_name, upload_ct = "audio.ogg", "audio/ogg"
-    elif "wav" in ct:
-        upload_name, upload_ct = "audio.wav", "audio/wav"
-    elif "webm" in ct or "webm" in fname:
-        upload_name, upload_ct = "audio.webm", "audio/webm"
-    else:
-        upload_name, upload_ct = "audio.webm", "audio/webm"
 
     # 音频太小说明基本是静音，直接跳过避免Whisper幻觉
     if len(audio_data) < 5000:
         return {"error": "录音太短，请再说一次"}
+
+    # 前端已转成WAV格式，直接发送
+    fname = audio.filename or "audio.wav"
+    ct = (audio.content_type or "").split(";")[0].strip()
+    if "wav" in fname or "wav" in ct:
+        upload_name, upload_ct = "audio.wav", "audio/wav"
+    elif "mp3" in fname or "mpeg" in ct:
+        upload_name, upload_ct = "audio.mp3", "audio/mpeg"
+    else:
+        upload_name, upload_ct = "audio.wav", "audio/wav"
 
     async with httpx.AsyncClient(timeout=30) as client:
         stt_resp = await client.post(
