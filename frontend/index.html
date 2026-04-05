@@ -602,6 +602,26 @@ body {
   position:absolute; top:20px; right:24px;
   font-size:14px; color:var(--text2); font-weight:600;
 }
+.vc-wave-bar {
+  width:4px; border-radius:2px; background:var(--accent);
+  height:6px; transition:height .1s ease;
+}
+.vc-wave-bar.active {
+  animation: waveAnim .4s ease-in-out infinite alternate;
+}
+.vc-wave-bar:nth-child(1) { animation-delay:0s; }
+.vc-wave-bar:nth-child(2) { animation-delay:.05s; }
+.vc-wave-bar:nth-child(3) { animation-delay:.1s; }
+.vc-wave-bar:nth-child(4) { animation-delay:.15s; }
+.vc-wave-bar:nth-child(5) { animation-delay:.2s; }
+.vc-wave-bar:nth-child(6) { animation-delay:.15s; }
+.vc-wave-bar:nth-child(7) { animation-delay:.1s; }
+.vc-wave-bar:nth-child(8) { animation-delay:.05s; }
+.vc-wave-bar:nth-child(9) { animation-delay:0s; }
+@keyframes waveAnim {
+  from { height:6px; }
+  to { height:28px; }
+}
 
 /* -- Mobile responsive -- */
 /* -- iPad -- */
@@ -694,12 +714,20 @@ body {
   .mobile-more-item svg { width:16px; height:16px; }
 
   /* Voice call responsive */
+  .voice-call-overlay { padding:20px 16px; padding-bottom:calc(20px + env(safe-area-inset-bottom, 0px)); }
   .vc-avatar { width:80px; height:80px; }
   .vc-avatar svg { width:36px; height:36px; }
-  .vc-transcript { max-width:90vw; font-size:12px; padding:12px; }
-  .vc-btn { width:50px; height:50px; }
+  .vc-transcript { max-width:90vw; font-size:12px; padding:12px; max-height:35vh; overflow-y:auto; }
+  .vc-btn { width:54px; height:54px; }
   .vc-name { font-size:16px; }
+  .vc-controls { gap:20px; }
   #vcCameraBox { width:220px !important; height:165px !important; }
+  .vc-subject-info { top:12px; font-size:11px; }
+  .vc-timer { top:12px; right:16px; font-size:12px; }
+  #vcWaveform { height:28px; }
+
+  /* Video modal responsive */
+  .video-modal-box { width:95vw; height:60vh; }
 }
 
 /* -- Small phones -- */
@@ -1133,10 +1161,18 @@ body {
   <div class="vc-avatar" id="vcAvatar"><i data-lucide="flower-2" style="width:56px;height:56px;color:#fff"></i></div>
   <div class="vc-name">栀老师</div>
   <div class="vc-status" id="vcStatus"><span class="dot green"></span>等待开始...</div>
-  <div class="vc-transcript" id="vcTranscript">按住麦克风说话，松开后栀老师会回答你<br>点击摄像头按钮可以展示题目</div>
+  <div class="vc-transcript" id="vcTranscript">开始说话吧，栀老师在听~<br>说完会自动识别并回答你</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:12px">
+    <div id="vcWaveform" style="display:flex;gap:3px;align-items:center;height:32px">
+      <div class="vc-wave-bar"></div><div class="vc-wave-bar"></div><div class="vc-wave-bar"></div>
+      <div class="vc-wave-bar"></div><div class="vc-wave-bar"></div><div class="vc-wave-bar"></div>
+      <div class="vc-wave-bar"></div><div class="vc-wave-bar"></div><div class="vc-wave-bar"></div>
+    </div>
+    <div id="vcModeLabel" style="font-size:11px;color:var(--text3)">自动对话模式</div>
+  </div>
   <div class="vc-controls">
     <button class="vc-btn" id="vcCamBtn" onclick="toggleVcCamera()" style="background:linear-gradient(135deg,#3b82f6,#60a5fa);color:#fff" title="开关摄像头"><i data-lucide="video"></i></button>
-    <button class="vc-btn mic" id="vcMicBtn"><i data-lucide="mic"></i></button>
+    <button class="vc-btn mic" id="vcMicBtn" onclick="vcToggleListening()" title="开始/暂停对话"><i data-lucide="mic"></i></button>
     <button class="vc-btn end" onclick="endVoiceCall()"><i data-lucide="phone-off"></i></button>
   </div>
 </div>
@@ -1885,14 +1921,14 @@ async function switchResource(name, el) {
       container.innerHTML = videos.map(v => {
         const platformColors = {'bilibili':'#fb7299'};
         const color = platformColors[v.platform] || 'var(--accent)';
-        return `<a href="${v.url}" target="_blank" class="video-card">
+        return `<div class="video-card" onclick="openBilibiliVideo('${v.url.replace(/'/g,"\\'")}', '${v.title.replace(/'/g,"\\'")}')">
           <div class="video-icon" style="background:${color}15"><i data-lucide="play-circle" style="color:${color};width:18px;height:18px"></i></div>
           <div class="video-info">
             <div class="video-title">${v.title}</div>
             <div class="video-teacher">${v.teacher} · B站</div>
           </div>
-          <div style="font-size:10px;color:#fb7299;font-weight:600">打开B站</div>
-        </a>`;
+          <div style="font-size:10px;color:#fb7299;font-weight:600;white-space:nowrap">站内播放</div>
+        </div>`;
       }).join('');
       lucide.createIcons();
     } catch(e) {
@@ -2019,7 +2055,7 @@ let currentFormulaSubject = '数学';
 function renderFormulaTabs() {
   const tabs = document.getElementById('formulaTabs');
   tabs.innerHTML = '';
-  const formulaSubjects = ['数学','物理','化学','地理'];
+  const formulaSubjects = ['数学','物理','化学','英语','地理'];
   formulaSubjects.forEach((name,i) => {
     const subj = subjects.find(s => s.name === name);
     const iconName = subjectIcons[name] || 'book';
@@ -2172,31 +2208,41 @@ function resetPomodoro() {
 }
 
 // ── Voice/Video call (OpenAI Whisper + TTS + Camera) ──
+// ── Voice Call: 24h 自动对话模式 ──
 let vcActive = false;
 let vcMessages = [];
 let vcTimerInterval = null;
 let vcSeconds = 0;
-let vcMicOn = true;
+let vcListening = false;    // 是否正在监听
 let vcProcessing = false;
 let vcMediaRecorder = null;
 let vcAudioChunks = [];
 let vcCurrentAudio = null;
 let vcCameraStream = null;
 let vcCameraOn = false;
+let vcMicStream = null;     // 持久麦克风流
+let vcAnalyser = null;      // 音量分析器
+let vcSilenceTimer = null;  // 静音检测计时
+let vcSilenceStart = 0;     // 静音开始时间
+let vcHasVoice = false;     // 是否检测到过人声
+const VC_SILENCE_THRESHOLD = 15;   // 音量阈值（0-255）
+const VC_SILENCE_DURATION = 1800;  // 静音多久后自动发送（ms）
+const VC_MIN_RECORD_TIME = 800;    // 最短录音时间（ms）
 
 function startVoiceCall() {
   vcActive = true;
   vcMessages = [];
   vcSeconds = 0;
-  vcMicOn = true;
+  vcListening = false;
   vcProcessing = false;
 
   const subj = subjects.find(s => s.name === currentSubject);
   document.getElementById('vcSubject').textContent = subj ? `${subj.name}辅导` : '全科辅导';
   document.getElementById('voiceCallOverlay').classList.add('active');
-  document.getElementById('vcTranscript').innerHTML = '按住麦克风按钮说话，松开后栀老师会回答你';
-  document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 按住说话';
+  document.getElementById('vcTranscript').innerHTML = '点击麦克风开始对话~<br>栀老师24小时在线陪你学习';
+  document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已连接 · 点击麦克风开始';
   document.getElementById('vcAvatar').className = 'vc-avatar';
+  vcUpdateMicBtn();
   lucide.createIcons();
 
   vcTimerInterval = setInterval(() => {
@@ -2206,120 +2252,254 @@ function startVoiceCall() {
     document.getElementById('vcTimer').textContent = `${m}:${s}`;
   }, 1000);
 
-  // Setup push-to-talk on mic button
-  const micBtn = document.getElementById('vcMicBtn');
-  micBtn.onmousedown = micBtn.ontouchstart = function(e) {
-    e.preventDefault();
-    if (vcProcessing) return;
-    vcStartRecording();
-  };
-  micBtn.onmouseup = micBtn.ontouchend = function(e) {
-    e.preventDefault();
-    if (vcProcessing) return;
-    vcStopRecordingAndSend();
-  };
+  // 自动开始监听，不需要手动点麦克风
+  setTimeout(() => { if (vcActive && !vcListening) vcStartListening(); }, 500);
 }
 
-async function vcStartRecording() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    vcAudioChunks = [];
-    vcMediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-    vcMediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) vcAudioChunks.push(e.data);
-    };
-    vcMediaRecorder.start();
-    document.getElementById('vcStatus').innerHTML = '<span class="dot" style="background:#ef4444;animation:blink .5s infinite"></span>正在录音...松开发送';
-    document.getElementById('vcAvatar').className = 'vc-avatar listening';
-    document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,#ef4444,#f472b6)';
-  } catch(e) {
-    alert('无法访问麦克风，请检查权限');
+function vcUpdateMicBtn() {
+  const btn = document.getElementById('vcMicBtn');
+  if (vcListening) {
+    btn.style.background = 'linear-gradient(135deg,#22c55e,#4ade80)';
+    btn.innerHTML = '<i data-lucide="mic"></i>';
+  } else {
+    btn.style.background = '';
+    btn.innerHTML = '<i data-lucide="mic-off"></i>';
+  }
+  lucide.createIcons();
+}
+
+function vcSetWaveActive(active) {
+  document.querySelectorAll('.vc-wave-bar').forEach(bar => {
+    bar.classList.toggle('active', active);
+  });
+}
+
+// 开始/暂停监听
+async function vcToggleListening() {
+  if (vcProcessing) return;
+  if (vcListening) {
+    vcStopListening();
+  } else {
+    await vcStartListening();
   }
 }
 
-async function vcStopRecordingAndSend() {
-  if (!vcMediaRecorder || vcMediaRecorder.state !== 'recording') return;
+async function vcStartListening() {
+  try {
+    vcMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    vcListening = true;
+    vcUpdateMicBtn();
 
-  document.getElementById('vcMicBtn').style.background = '';
+    // 设置音量分析器
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioCtx.createMediaStreamSource(vcMicStream);
+    vcAnalyser = audioCtx.createAnalyser();
+    vcAnalyser.fftSize = 512;
+    source.connect(vcAnalyser);
 
-  return new Promise((resolve) => {
-    vcMediaRecorder.onstop = async () => {
-      // Stop mic stream
-      vcMediaRecorder.stream.getTracks().forEach(t => t.stop());
+    // 开始录音
+    vcAudioChunks = [];
+    vcMediaRecorder = new MediaRecorder(vcMicStream, {
+      mimeType: MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/mp4'
+    });
+    vcMediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) vcAudioChunks.push(e.data);
+    };
+    vcMediaRecorder.start(250); // 每250ms收集一次数据
+    vcHasVoice = false;
+    vcSilenceStart = 0;
 
-      const audioBlob = new Blob(vcAudioChunks, { type: 'audio/webm' });
-      if (audioBlob.size < 1000) {
-        document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>录音太短，再试一次';
-        resolve();
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师在听...说话吧~';
+    document.getElementById('vcAvatar').className = 'vc-avatar listening';
+    document.getElementById('vcModeLabel').textContent = '说完话会自动识别';
+
+    // 开始音量监测循环
+    vcMonitorAudio();
+
+  } catch(e) {
+    document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--red)">无法访问麦克风，请检查浏览器权限</div>';
+  }
+}
+
+function vcStopListening() {
+  vcListening = false;
+  if (vcSilenceTimer) { clearTimeout(vcSilenceTimer); vcSilenceTimer = null; }
+  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
+    vcMediaRecorder.stop();
+  }
+  if (vcMicStream) {
+    vcMicStream.getTracks().forEach(t => t.stop());
+    vcMicStream = null;
+  }
+  vcAnalyser = null;
+  vcSetWaveActive(false);
+  vcUpdateMicBtn();
+  document.getElementById('vcAvatar').className = 'vc-avatar';
+  if (!vcProcessing) {
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>已暂停 · 点击麦克风继续';
+  }
+}
+
+// 实时音量监测 + 静音自动发送
+function vcMonitorAudio() {
+  if (!vcListening || !vcAnalyser) return;
+
+  const dataArray = new Uint8Array(vcAnalyser.frequencyBinCount);
+  vcAnalyser.getByteFrequencyData(dataArray);
+
+  // 计算平均音量
+  let sum = 0;
+  for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+  const avgVolume = sum / dataArray.length;
+
+  // 更新波形动画
+  const bars = document.querySelectorAll('.vc-wave-bar');
+  if (avgVolume > VC_SILENCE_THRESHOLD) {
+    // 有声音
+    vcHasVoice = true;
+    vcSilenceStart = 0;
+    vcSetWaveActive(true);
+    bars.forEach((bar, i) => {
+      const freq = dataArray[Math.floor(i * dataArray.length / bars.length)];
+      bar.style.height = Math.max(6, freq / 8) + 'px';
+    });
+  } else {
+    // 静音
+    vcSetWaveActive(false);
+    bars.forEach(bar => bar.style.height = '6px');
+
+    if (vcHasVoice) {
+      // 说过话后的静音 -> 开始倒计时
+      if (!vcSilenceStart) vcSilenceStart = Date.now();
+      const silentMs = Date.now() - vcSilenceStart;
+      if (silentMs >= VC_SILENCE_DURATION) {
+        // 静音够久了，自动发送
+        vcAutoSend();
         return;
       }
+    }
+  }
 
-      vcProcessing = true;
-      document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>栀老师正在思考...';
-      document.getElementById('vcAvatar').className = 'vc-avatar';
-      document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--text2)">识别语音中...</div>';
+  if (vcListening) requestAnimationFrame(vcMonitorAudio);
+}
 
-      try {
-        const formData = new FormData();
-        formData.append('audio', audioBlob, 'audio.webm');
-        formData.append('subject', currentSubject);
-        formData.append('history', JSON.stringify(vcMessages));
-        // Capture camera frame if video call is on
-        const frame = vcCaptureFrame();
-        if (frame) formData.append('image', frame);
+// 自动检测到说完话，停止录音并发送
+async function vcAutoSend() {
+  if (!vcListening || vcProcessing) return;
+  vcProcessing = true;
+  vcHasVoice = false;
+  vcSilenceStart = 0;
 
-        const resp = await fetch('/api/voice/chat', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await resp.json();
+  // 停止录音但保持麦克风流（等回答完再重新开始）
+  vcListening = false;
+  vcSetWaveActive(false);
 
-        if (data.error) {
-          document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">${data.error}</div>`;
-          vcProcessing = false;
-          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
-          resolve();
-          return;
-        }
+  document.getElementById('vcStatus').innerHTML = '<span class="dot orange"></span>栀老师正在思考...';
+  document.getElementById('vcAvatar').className = 'vc-avatar';
+  document.getElementById('vcModeLabel').textContent = '处理中...';
 
-        // Save messages
-        vcMessages.push({role: 'user', content: data.user_text});
-        vcMessages.push({role: 'assistant', content: data.ai_text});
+  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
+    await new Promise(resolve => {
+      vcMediaRecorder.onstop = resolve;
+      vcMediaRecorder.stop();
+    });
+  }
+  // 停止麦克风
+  if (vcMicStream) {
+    vcMicStream.getTracks().forEach(t => t.stop());
+    vcMicStream = null;
+  }
+  vcAnalyser = null;
 
-        // Show transcript
-        document.getElementById('vcTranscript').innerHTML =
-          `<div style="color:var(--text3);font-size:12px;margin-bottom:8px">你说: ${data.user_text}</div>` +
-          `<div style="font-size:13px;line-height:1.6">${data.ai_text.slice(0, 500)}${data.ai_text.length > 500 ? '...' : ''}</div>`;
+  const mimeType = vcMediaRecorder ? vcMediaRecorder.mimeType : 'audio/webm';
+  const audioBlob = new Blob(vcAudioChunks, { type: mimeType });
+  if (audioBlob.size < 1000) {
+    document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>没听清，再说一次~';
+    vcProcessing = false;
+    // 重新开始监听
+    setTimeout(() => { if (vcActive && !vcListening) vcStartListening(); }, 1000);
+    return;
+  }
 
-        // Play TTS audio
-        if (data.audio) {
-          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师正在说话...';
-          document.getElementById('vcAvatar').className = 'vc-avatar speaking';
+  document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--text2)">识别语音中...</div>';
 
-          const audioBytes = Uint8Array.from(atob(data.audio), c => c.charCodeAt(0));
-          const audioBlob2 = new Blob([audioBytes], { type: 'audio/mpeg' });
-          const audioUrl = URL.createObjectURL(audioBlob2);
-          vcCurrentAudio = new Audio(audioUrl);
-          vcCurrentAudio.onended = () => {
-            document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
-            document.getElementById('vcAvatar').className = 'vc-avatar';
-            vcProcessing = false;
-          };
-          vcCurrentAudio.play();
-        } else {
-          vcProcessing = false;
-          document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
-        }
+  try {
+    const formData = new FormData();
+    let ext = 'audio.webm';
+    if (mimeType.includes('mp4')) ext = 'audio.mp4';
+    else if (mimeType.includes('ogg')) ext = 'audio.ogg';
+    else if (mimeType.includes('wav')) ext = 'audio.wav';
+    formData.append('audio', new File([audioBlob], ext, { type: mimeType }));
+    formData.append('subject', currentSubject);
+    formData.append('history', JSON.stringify(vcMessages.slice(-20)));
+    const frame = vcCaptureFrame();
+    if (frame) formData.append('image', frame);
 
-      } catch(e) {
-        document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
+    const resp = await fetch('/api/voice/chat', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await resp.json();
+
+    if (data.error) {
+      document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">${data.error}</div><div style="color:var(--text3);font-size:11px;margin-top:4px">格式: ${mimeType} | 大小: ${(audioBlob.size/1024).toFixed(1)}KB</div>`;
+      document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>再试一次~';
+      vcProcessing = false;
+      vcUpdateMicBtn();
+      setTimeout(() => { if (vcActive) vcStartListening(); }, 2000);
+      return;
+    }
+
+    // 保存对话
+    vcMessages.push({role: 'user', content: data.user_text});
+    vcMessages.push({role: 'assistant', content: data.ai_text});
+
+    // 显示对话内容（累积显示）
+    const transcriptEl = document.getElementById('vcTranscript');
+    transcriptEl.innerHTML =
+      `<div style="color:var(--accent2);font-size:12px;margin-bottom:6px"><b>你:</b> ${data.user_text}</div>` +
+      `<div style="font-size:13px;line-height:1.7;color:var(--text)"><b>栀老师:</b> ${data.ai_text}</div>`;
+
+    // 播放语音回复
+    if (data.audio) {
+      document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>栀老师正在说...';
+      document.getElementById('vcAvatar').className = 'vc-avatar speaking';
+      document.getElementById('vcModeLabel').textContent = '栀老师回答中';
+
+      const audioBytes = Uint8Array.from(atob(data.audio), c => c.charCodeAt(0));
+      const audioBlob2 = new Blob([audioBytes], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlob2);
+      vcCurrentAudio = new Audio(audioUrl);
+      vcCurrentAudio.onended = () => {
+        document.getElementById('vcAvatar').className = 'vc-avatar';
         vcProcessing = false;
-        document.getElementById('vcStatus').innerHTML = '<span class="dot green"></span>按住说话';
-      }
-      resolve();
-    };
-    vcMediaRecorder.stop();
-  });
+        vcUpdateMicBtn();
+        // 栀老师说完后自动重新开始监听 → 实现连续对话
+        if (vcActive) {
+          document.getElementById('vcModeLabel').textContent = '轮到你了~';
+          setTimeout(() => {
+            if (vcActive && !vcProcessing) vcStartListening();
+          }, 600);
+        }
+      };
+      vcCurrentAudio.onerror = () => {
+        vcProcessing = false;
+        vcUpdateMicBtn();
+        if (vcActive) setTimeout(() => vcStartListening(), 1000);
+      };
+      vcCurrentAudio.play();
+    } else {
+      vcProcessing = false;
+      vcUpdateMicBtn();
+      if (vcActive) setTimeout(() => vcStartListening(), 1000);
+    }
+
+  } catch(e) {
+    document.getElementById('vcTranscript').innerHTML = `<div style="color:var(--red)">连接失败: ${e.message}</div>`;
+    vcProcessing = false;
+    vcUpdateMicBtn();
+    if (vcActive) setTimeout(() => vcStartListening(), 3000);
+  }
 }
 
 // Camera toggle for video call
@@ -2327,7 +2507,6 @@ async function toggleVcCamera() {
   const box = document.getElementById('vcCameraBox');
   const btn = document.getElementById('vcCamBtn');
   if (vcCameraOn) {
-    // Turn off
     if (vcCameraStream) {
       vcCameraStream.getTracks().forEach(t => t.stop());
       vcCameraStream = null;
@@ -2338,7 +2517,6 @@ async function toggleVcCamera() {
     btn.innerHTML = '<i data-lucide="video"></i>';
     vcCameraOn = false;
   } else {
-    // Turn on
     try {
       vcCameraStream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } }
@@ -2350,13 +2528,12 @@ async function toggleVcCamera() {
       btn.innerHTML = '<i data-lucide="video-off"></i>';
       vcCameraOn = true;
     } catch(e) {
-      alert('无法打开摄像头');
+      document.getElementById('vcTranscript').innerHTML = '<div style="color:var(--red)">无法打开摄像头</div>';
     }
   }
   lucide.createIcons();
 }
 
-// Capture frame from video call camera
 function vcCaptureFrame() {
   if (!vcCameraOn || !vcCameraStream) return '';
   const video = document.getElementById('vcCameraVideo');
@@ -2367,25 +2544,18 @@ function vcCaptureFrame() {
   return canvas.toDataURL('image/jpeg', 0.7);
 }
 
-function toggleVoiceCallMic() {
-  // Push-to-talk mode - handled by mousedown/mouseup
-}
-
 function endVoiceCall() {
   vcActive = false;
-  vcMicOn = false;
   clearInterval(vcTimerInterval);
   if (vcCurrentAudio) { vcCurrentAudio.pause(); vcCurrentAudio = null; }
-  if (vcMediaRecorder && vcMediaRecorder.state === 'recording') {
-    vcMediaRecorder.stream.getTracks().forEach(t => t.stop());
-    vcMediaRecorder.stop();
-  }
+  vcStopListening();
   // Clean up camera
   if (vcCameraStream) {
     vcCameraStream.getTracks().forEach(t => t.stop());
     vcCameraStream = null;
   }
   vcCameraOn = false;
+  vcProcessing = false;
   document.getElementById('vcCameraBox').style.display = 'none';
   document.getElementById('vcAvatar').style.display = '';
   document.getElementById('voiceCallOverlay').classList.remove('active');
@@ -2396,7 +2566,7 @@ function endVoiceCall() {
     const empty = container.querySelector('.empty-state');
     if (empty) empty.remove();
     vcMessages.forEach(m => {
-      addMessageToUI(m.role, typeof m.content === 'string' ? m.content : '[语音]');
+      addMessageToUI(m.role, typeof m.content === 'string' ? m.content : '[语音对话]');
     });
   }
 }

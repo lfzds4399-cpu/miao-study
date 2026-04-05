@@ -214,5 +214,20 @@ VIDEO_RESOURCES = {
         {"chapter": "氧化还原反应", "title": "【高途课堂】高一化学·氧还性比较+配平·吕子正", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV18M4y1N7zy/", "teacher": "高途课堂", "rating": 4.7},
     ],
     "生物": [],
-    "地理": [],
+    "地理": [
+        # 羊羊的地理教室
+        {"chapter": "大气", "title": "【羊羊的地理教室】对流层大气的受热过程·超详细手绘讲解", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1iG4y1f73B/", "teacher": "羊羊的地理教室", "rating": 4.9},
+        {"chapter": "地表形态", "title": "【羊羊的地理教室】潟湖还是泻湖？手绘动画讲解", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Dp421m74C/", "teacher": "羊羊的地理教室", "rating": 4.9},
+        {"chapter": "地表形态", "title": "【羊羊的地理教室】层理、节理、片理、解理一次说清", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV14f421e716/", "teacher": "羊羊的地理教室", "rating": 4.8},
+        {"chapter": "水循环与洋流", "title": "【羊羊的地理教室】海水顶托/倒灌/入侵三秒分辨", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yM4y1E7tt/", "teacher": "羊羊的地理教室", "rating": 4.8},
+        # 高中地理老师-小7
+        {"chapter": "地表形态", "title": "【小7老师】构造地貌的形成·褶皱与断层详解", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1a1xMevE54/", "teacher": "高中地理老师-小7", "rating": 4.8},
+        {"chapter": "水循环与洋流", "title": "【小7老师】洋流分布规律与对地理环境的影响", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV19g41187d5/", "teacher": "高中地理老师-小7", "rating": 4.8},
+        {"chapter": "地表形态", "title": "【小7老师】等高线地形图判读技巧", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1V44y1D7L3/", "teacher": "高中地理老师-小7", "rating": 4.8},
+        {"chapter": "自然环境整体性与差异性", "title": "【小7老师】植被类型详解·热带雨林到苔原", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1W24y1y7da/", "teacher": "高中地理老师-小7", "rating": 4.7},
+        {"chapter": "资源、环境与国家安全", "title": "【小7老师】生态脆弱区的综合治理", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1sv4y127yX/", "teacher": "高中地理老师-小7", "rating": 4.7},
+        # 李说地理
+        {"chapter": "地表形态", "title": "【李说地理】雅丹地貌与风积地貌·解题思路", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1wt4y1B7r9/", "teacher": "李说地理", "rating": 4.7},
+        {"chapter": "水循环与洋流", "title": "【李说地理】堰塞湖与牛轭湖·地理名词辨析", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1T54y1W7p4/", "teacher": "李说地理", "rating": 4.7},
+    ],
 }
