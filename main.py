@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from database import engine
 import models
 import os
@@ -35,6 +36,9 @@ def _serve(filename):
     resp = FileResponse(os.path.join(FRONTEND, filename))
     resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
     return resp
+
+
+app.mount("/static", StaticFiles(directory=FRONTEND), name="static")
 
 
 @app.get("/")
