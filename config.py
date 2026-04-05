@@ -194,8 +194,8 @@ VIDEO_RESOURCES = {
         {"chapter": "【高二】电场", "title": "【黄夫人】高中物理电学篇（新教材版）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ob411p7xr/", "teacher": "黄夫人", "rating": 4.9},
         {"chapter": "【高二】磁场", "title": "安培力、洛伦兹力和安培定则·难点突破", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1or4y1Q7Cb/", "teacher": "高二物理", "rating": 4.8},
         {"chapter": "【高二】电磁感应", "title": "【黄夫人】巧记物理公式合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1uh411J7ia/", "teacher": "黄夫人", "rating": 4.8},
-        {"chapter": "【高二】电磁感应", "title": "【黄夫人】电容器运动学解题模板", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1vZ4y1x74H/", "teacher": "黄夫人", "rating": 4.8},
-        {"chapter": "【高二】交变电流", "title": "【大宽物理】交变电流·5分钟系列精讲", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1FW411W7xV/", "teacher": "大宽物理", "rating": 4.7},
+        {"chapter": "【高二】电磁感应", "title": "【黄夫人】电磁感应系列·电容器运动学解题模板", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1vZ4y1x74H/", "teacher": "黄夫人", "rating": 4.8},
+        {"chapter": "【高二】交变电流", "title": "【大宽物理】5分钟高中物理·远距离输电精讲", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1FW411W7xV/", "teacher": "大宽物理", "rating": 4.7},
 
         # ── 选择性必修三（热学+光+原子物理） ──
         {"chapter": "【高二】交变电流", "title": "高中物理选修3-3·分子动理论与热学合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV12E411w7PV/", "teacher": "物理合集", "rating": 4.7},
@@ -212,7 +212,7 @@ VIDEO_RESOURCES = {
     ],
     "化学": [
         # 真·凤舞九天
-        {"chapter": "化学反应原理", "title": "【真·凤舞九天】疯狂化学系列回顾", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Cx411i7em/", "teacher": "真·凤舞九天", "rating": 4.9},
+        {"chapter": "化学反应原理", "title": "【真·凤舞九天】疯狂化学系列·化学反应的魅力", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Cx411i7em/", "teacher": "真·凤舞九天", "rating": 4.9},
         {"chapter": "元素周期律", "title": "【真·凤舞九天】疯狂化学2：元素奇迹", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Xs411f7a6/", "teacher": "真·凤舞九天", "rating": 4.9},
         {"chapter": "电化学", "title": "【真·凤舞九天】如何打造爆款锂电池", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yJ411a7kG/", "teacher": "真·凤舞九天", "rating": 4.8},
         {"chapter": "有机化学基础", "title": "【真·凤舞九天】疯狂化学1.5", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1dx411i7QW/", "teacher": "真·凤舞九天", "rating": 4.8},
