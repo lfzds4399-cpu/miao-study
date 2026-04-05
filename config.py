@@ -184,19 +184,31 @@ VIDEO_RESOURCES = {
         {"chapter": "词汇积累", "title": "【新东方】高考必背单词秘籍", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1A7411p7vn/", "teacher": "新东方在线", "rating": 4.7},
     ],
     "物理": [
-        # 黄夫人
+        # ── 选择性必修一（动量+振动+波） ──
+        {"chapter": "【高二】电场", "title": "【跳跳学长】选修全系统课（动量+振动+波+电磁感应+交变电流）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1qm4y1i7zf/", "teacher": "跳跳学长", "rating": 4.9},
+        {"chapter": "【高二】电场", "title": "【2025新版】选择性必修一同步精讲·动量+振动+波", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1Z7twzdEkn/", "teacher": "名师精讲", "rating": 4.8},
+        {"chapter": "【高二】电场", "title": "动量守恒本质·全模型动画演示·一看就懂", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1cajKzCEE9/", "teacher": "物理动画", "rating": 4.8},
+
+        # ── 选择性必修二（电磁学·高考压轴核心） ──
+        {"chapter": "【高二】电场", "title": "【全63集】选择性必修二精讲·安培力+电磁感应+交变电流+电磁波", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV17ZUaBCEnQ/", "teacher": "同步精讲", "rating": 4.9},
+        {"chapter": "【高二】电场", "title": "【黄夫人】高中物理电学篇（新教材版）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ob411p7xr/", "teacher": "黄夫人", "rating": 4.9},
+        {"chapter": "【高二】磁场", "title": "安培力、洛伦兹力和安培定则·难点突破", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1or4y1Q7Cb/", "teacher": "高二物理", "rating": 4.8},
+        {"chapter": "【高二】电磁感应", "title": "【黄夫人】巧记物理公式合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1uh411J7ia/", "teacher": "黄夫人", "rating": 4.8},
+        {"chapter": "【高二】电磁感应", "title": "【黄夫人】电容器运动学解题模板", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1vZ4y1x74H/", "teacher": "黄夫人", "rating": 4.8},
+        {"chapter": "【高二】交变电流", "title": "【大宽物理】交变电流·5分钟系列精讲", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1FW411W7xV/", "teacher": "大宽物理", "rating": 4.7},
+
+        # ── 选择性必修三（热学+光+原子物理） ──
+        {"chapter": "【高二】交变电流", "title": "高中物理选修3-3·分子动理论与热学合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV12E411w7PV/", "teacher": "物理合集", "rating": 4.7},
+
+        # ── 高二电磁学基础 ──
+        {"chapter": "【高二】电场", "title": "【跳跳学长】必修3系统课·库仑力平衡问题", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1VF411773F/", "teacher": "跳跳学长", "rating": 4.8},
+        {"chapter": "【高二】恒定电流", "title": "【跳跳学长】必修3系统课·电流微观表达式", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1LN4y1M7Gg/", "teacher": "跳跳学长", "rating": 4.8},
+        {"chapter": "【高二】恒定电流", "title": "【跳跳学长】必修3系统课·电源与电动势", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1CW4y117Rf/", "teacher": "跳跳学长", "rating": 4.8},
+        {"chapter": "【高二】电场", "title": "【北京数字学校】高二物理第一学期合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yt4y1S7qw/", "teacher": "北京数字学校", "rating": 4.7},
+
+        # ── 高一基础 ──
         {"chapter": "曲线运动", "title": "【黄夫人】高中物理一轮复习·平抛运动（已完结）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1b54y1r7LD/", "teacher": "黄夫人", "rating": 4.9},
-        {"chapter": "电场", "title": "【黄夫人】高中物理电学篇（新教材版）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1ob411p7xr/", "teacher": "黄夫人", "rating": 4.9},
-        {"chapter": "电磁感应", "title": "【黄夫人】巧记物理公式合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1uh411J7ia/", "teacher": "黄夫人", "rating": 4.8},
-        {"chapter": "电磁感应", "title": "【黄夫人】电容器运动学解题模板", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1vZ4y1x74H/", "teacher": "黄夫人", "rating": 4.8},
-        # 跳跳学长
-        {"chapter": "交变电流", "title": "【跳跳学长】选修系统课合集（动量+振动+波+电磁感应+交变电流）", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1qm4y1i7zf/", "teacher": "跳跳学长", "rating": 4.9},
-        {"chapter": "电场", "title": "【跳跳学长】必修3系统课·库仑力平衡问题", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1VF411773F/", "teacher": "跳跳学长", "rating": 4.8},
-        {"chapter": "恒定电流", "title": "【跳跳学长】必修3系统课·电流微观表达式", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1LN4y1M7Gg/", "teacher": "跳跳学长", "rating": 4.8},
-        {"chapter": "恒定电流", "title": "【跳跳学长】必修3系统课·电源与电动势", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1CW4y117Rf/", "teacher": "跳跳学长", "rating": 4.8},
-        # 北京数字学校
         {"chapter": "交变电流", "title": "【北京数字学校】高中物理选修3-2·传感器", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV177411s7tm/", "teacher": "北京数字学校", "rating": 4.7},
-        {"chapter": "电场", "title": "【北京数字学校】高二物理第一学期合集", "platform": "bilibili", "url": "https://www.bilibili.com/video/BV1yt4y1S7qw/", "teacher": "北京数字学校", "rating": 4.7},
     ],
     "化学": [
         # 真·凤舞九天
