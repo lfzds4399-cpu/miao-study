@@ -10,6 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6"></script>
 <style>
 :root {
   --bg: #fdf6ff;
@@ -761,6 +762,9 @@ body {
       <div class="nav-item" data-page="mistakes" onclick="switchPage('mistakes')">
         <span class="icon"><i data-lucide="alert-triangle"></i></span> 易错点
       </div>
+      <div class="nav-item" data-page="graph" onclick="switchPage('graph')">
+        <span class="icon"><i data-lucide="chart-spline"></i></span> 画图计算
+      </div>
       <div class="nav-item" data-page="pomodoro" onclick="switchPage('pomodoro')">
         <span class="icon"><i data-lucide="timer"></i></span> 番茄钟
       </div>
@@ -871,6 +875,7 @@ body {
               <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageUpload(event)">
               <button class="chat-btn camera" onclick="openCamera()" title="拍照解题"><i data-lucide="camera"></i></button>
               <button class="chat-btn voice" id="voiceBtn" onclick="toggleVoice()" title="语音输入"><i data-lucide="mic"></i></button>
+              <button class="chat-btn upload" onclick="startGrading()" title="批改作业" style="font-size:11px;font-weight:700;color:var(--red)"><i data-lucide="check-check"></i></button>
               <textarea class="chat-input" id="chatInput" placeholder="输入问题，或上传题目图片..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}" oninput="autoResize(this)"></textarea>
               <button class="chat-btn send" onclick="sendMessage()" title="发送"><i data-lucide="send"></i></button>
             </div>
@@ -944,6 +949,23 @@ body {
       <div class="main-content">
         <div class="resource-tabs" id="mistakeTabs"></div>
         <div id="mistakeContent"></div>
+      </div>
+    </div>
+
+    <!-- ===== Graph Calculator ===== -->
+    <div class="page" id="page-graph">
+      <div class="main-header">
+        <div class="main-title"><i data-lucide="chart-spline"></i> 画图计算器</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost" onclick="graphPreset('y=sin(x)')">sin(x)</button>
+          <button class="btn btn-ghost" onclick="graphPreset('y=x^2')">x²</button>
+          <button class="btn btn-ghost" onclick="graphPreset('y=1/x')">1/x</button>
+          <button class="btn btn-ghost" onclick="graphPreset('x^2+y^2=4')">圆</button>
+          <button class="btn btn-ghost" onclick="graphPreset('x^2/4+y^2=1')">椭圆</button>
+        </div>
+      </div>
+      <div class="main-content" style="padding:0;height:100%">
+        <div id="desmosContainer" style="width:100%;height:100%"></div>
       </div>
     </div>
 
@@ -1028,6 +1050,7 @@ body {
   <div class="mobile-nav-item" onclick="mobileSwitchPage('resources',this)"><i data-lucide="book-open"></i><span>资源</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('formulas',this)"><i data-lucide="sigma"></i><span>公式</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('mistakes',this)"><i data-lucide="alert-triangle"></i><span>易错</span></div>
+  <div class="mobile-nav-item" onclick="mobileSwitchPage('graph',this)"><i data-lucide="chart-spline"></i><span>画图</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('notes',this)"><i data-lucide="notebook-pen"></i><span>笔记</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('wrong',this)"><i data-lucide="circle-x"></i><span>错题</span></div>
   <div class="mobile-nav-item" onclick="mobileSwitchPage('board',this)"><i data-lucide="message-square-text"></i><span>留言</span></div>
@@ -1309,6 +1332,7 @@ function switchPage(name) {
   if (name === 'dashboard') { loadStats(); loadDailyCard(); }
   if (name === 'analysis') loadAnalysis();
   if (name === 'mistakes') renderMistakeTabs();
+  if (name === 'graph') setTimeout(initDesmos, 100);
   if (name === 'board') loadBoard();
 }
 
@@ -1508,6 +1532,18 @@ async function sendMessage() {
     chatMessages.push({role:'assistant', content: fullText});
   } catch(e) {
     aiDiv.innerHTML = `<span style="color:var(--red)">连接失败: ${e.message}</span>`;
+  }
+}
+
+function startGrading() {
+  // If there's an uploaded image, auto-fill grading prompt
+  if (uploadedImage) {
+    document.getElementById('chatInput').value = '请批改这份作业/答案，逐题检查对错，标注✓或✗，给出正确答案和详细解析';
+    sendMessage();
+  } else {
+    // Open file picker then set grading mode
+    document.getElementById('chatInput').value = '请批改这份作业/答案，逐题检查对错，标注✓或✗，给出正确答案和详细解析';
+    document.getElementById('fileInput').click();
   }
 }
 
@@ -2448,6 +2484,33 @@ ${Object.entries(wrongSummary).map(([k,v]) => `- ${k}(${v.length}题): ${v.slice
   } catch(e) {
     panel.innerHTML = '<div class="stat-label">AI学习建议</div><div style="color:var(--red);font-size:13px">分析失败: ' + e.message + '</div>';
   }
+}
+
+// ── Desmos Graph Calculator ──
+let desmosCalc = null;
+
+function initDesmos() {
+  if (desmosCalc) return;
+  const container = document.getElementById('desmosContainer');
+  if (!container) return;
+  desmosCalc = Desmos.GraphingCalculator(container, {
+    language: 'zh-CN',
+    expressions: true,
+    settingsMenu: true,
+    zoomButtons: true,
+    expressionsTopbar: true,
+    border: false,
+    keypad: true,
+    fontSize: 14,
+  });
+  // Default expression
+  desmosCalc.setExpression({ id: 'default', latex: 'y=x^2' });
+}
+
+function graphPreset(latex) {
+  if (!desmosCalc) initDesmos();
+  desmosCalc.setBlank();
+  desmosCalc.setExpression({ id: 'preset', latex: latex, color: '#b06ce0' });
 }
 
 // ── Mobile nav ──
